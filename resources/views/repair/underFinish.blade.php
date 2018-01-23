@@ -40,8 +40,7 @@
                     <td>
                         <a href="javascript:;" class="btn btn-success btn-xs">打印</a>
                         <a href="{{ url('repair/finish/'.$item->id) }}" class="btn btn-warning btn-xs">完工</a>
-                        <a href="{{ url('repair/cancel/'.$item->id) }}" class="btn btn-danger btn-xs">取消</a>
-                        {{--<a href="javascript:;" delete_id="{{ $room->room_id }}" class="btn btn-danger btn-xs delete-button">删除</a>--}}
+                        <a href="javascript:;" delete_id="{{ $item->id }}" class="btn btn-danger btn-xs delete-button">取消</a>
                     </td>
                 </tr>
             @endforeach
@@ -49,7 +48,26 @@
     </div>
 @endsection
 @section('modal')
-
+    <!-- delete modal -->
+    <div id="delete-modal" class="modal fade bs-example-modal-sm">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">取消确认</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        确认要取消吗？
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('bottom')
 
@@ -58,7 +76,6 @@
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
     <script>
-
-
+        ajaxDelete('{{ url('repair/cancel') }}')
     </script>
 @endsection

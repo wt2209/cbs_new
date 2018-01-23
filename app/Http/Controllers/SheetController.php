@@ -75,6 +75,7 @@ class SheetController extends Controller
                 }
                 $chars = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
+                $count = [];
                 foreach ($rooms as $room) {
                     if (isset($count[$room->company_id][$room->rent_type_id])) {
                         $count[$room->company_id][$room->rent_type_id]++ ;

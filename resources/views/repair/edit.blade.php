@@ -1,6 +1,6 @@
 @extends('header')
 
-@section('title', '审核维修项目')
+@section('title', '修改')
 
 
 @section('css')
@@ -9,7 +9,7 @@
 @endsection
 @section('header')
     <ul class="nav nav-pills nav-small">
-        <li role="presentation" class="active"><a href="">审核维修项目</a></li>
+        <li role="presentation" class="active"><a href="">修改</a></li>
     </ul>
     <div id="return-btn">
         <a href="{{ url('repair/index') }}"><< 返回未完工列表</a>
@@ -20,12 +20,12 @@
     <div class="table-responsive">
         <form id="form">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-            <input type="hidden" name="id" value="{{$item->id}}">
+            <input type="hidden" name="id" value="{{ $item->id }}">
             <table class="table table-hover table-condensed">
                 <tr class="no-border">
                     <th width="10%">位置/房间号</th>
                     <td width="20%">
-                        {{ $item->location }}
+                        <input type="text" class="form-control input-sm" value="{{ $item->location }}" name="location"/>
                     </td>
                     <td width="10%"></td>
                     <td></td>
@@ -34,28 +34,39 @@
                 <tr>
                     <th>报修内容</th>
                     <td colspan="2" >
-                        {{ $item->content }}
+                        <textarea name="content" class="form-control" cols="30" rows="3">{{ $item->content }}</textarea>
                     </td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <th>是否通过</th>
-                    <td colspan="2" >
-                        <label><input type="radio" name="is_passed" value="1" checked> 是</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label><input type="radio" name="is_passed" value="0"> 否</label>
+                    <th>报修人</th>
+                    <td>
+                        <input type="text" class="form-control input-sm" value="{{ $item->name }}" name="name"/>
                     </td>
+                    <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <th>审核意见</th>
-                    <td colspan="2" >
-                        <textarea name="review_remark" class="form-control"></textarea>
+                    <th>联系人电话</th>
+                    <td>
+                        <input type="text" class="form-control input-sm" value="{{ $item->phone_number }}" name="phone_number"/>
                     </td>
                     <td></td>
                     <td></td>
+                    <td></td>
                 </tr>
+                <tr>
+                    <th>时间</th>
+                    <td>
+                        <input type="text" class="form-control input-sm" name="report_at" value="{{ $item->report_at }}" placeholder="格式：2018-1-22 留空则以当前日期为准"/>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
             </table>
             <div class="form-submit">
                 <button class="btn btn-success" id="submit">提交</button>
@@ -69,6 +80,14 @@
     <script src="{{ asset('/js/functions.js') }}"></script>
     <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
     <script>
+        // 联系电话(手机/电话皆可)验证
+        $.validator.addMethod("isTel", function(value,element) {
+            var length = value.length;
+            var mobile = /^(((1[0-9]{1}))+\d{9})$/;
+            var tel = /^(\d{3,4}-?)?\d{7,9}$/g;
+            return this.optional(element) || tel.test(value) || (length==11 && mobile.test(value));
+        }, "请正确填写您的联系方式");
+
         /*表单验证*/
         var s = true;
         var validate = $("#form").validate({
@@ -80,7 +99,7 @@
                 if (s) {
                     s = false;
                     maskShow();
-                    $.post('{{ url('repair/review-for-one') }}', $('#form').serialize(), function(e){
+                    $.post('{{ url('repair/store') }}', $('#form').serialize(), function(e){
                         maskHide();
                         popdown({'message':e.message, 'status': e.status, 'callback':function(){
                             /*返回并刷新原页面*/
@@ -92,13 +111,35 @@
                 return false;
             },
             rules:{
-                review_remark:{
+                location:{
+                    required:true,
                     maxlength:255
+                },
+                content:{
+                    required:true,
+                    maxlength:255
+                },
+                name:{
+                    maxlength:5
+                },
+                phone_number:{
+                    isTel:true
                 }
             },
             messages:{
-                review_remark:{
+                location:{
+                    required:'必须填写！',
                     maxlength:'不能多于255个字符！'
+                },
+                content:{
+                    required:'必须填写！',
+                    maxlength:'不能多于255个字符！'
+                },
+                name:{
+                    maxlength:'不能多于5个字符！'
+                },
+                phone_number:{
+                    isTel:'请填写一个正确的电话号码！'
                 }
             }
         });

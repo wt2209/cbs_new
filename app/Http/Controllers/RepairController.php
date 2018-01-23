@@ -39,7 +39,12 @@ class RepairController extends Controller
             exit(json_encode(['message'=>$validator->errors()->first(), 'status'=>0]));
         }
 
-        $company = new Repair();
+        $id = (int)$request->input('id');
+        if ($id) {
+            $company = Repair::find($id);
+        } else {
+            $company = new Repair();
+        }
         $company->location = $request->input('location');
         $company->content = $request->input('content');
         $company->name = $request->input('name');
@@ -57,6 +62,14 @@ class RepairController extends Controller
         return response()->json(['message'=>'错误：数据添加失败，请重试...', 'status'=>0]);
     }
 
+
+    public function getEdit($id)
+    {
+        $item = Repair::find((int)$id);
+        return view('repair.edit', compact('item'));
+    }
+
+
     /**
      * 待审核项目
      */
@@ -65,6 +78,8 @@ class RepairController extends Controller
         $underReviews = Repair::where('is_reviewed', 0)->get();
         return view('repair.underReview', compact('underReviews'));
     }
+
+
 
     /**
      * 审核
@@ -114,6 +129,7 @@ class RepairController extends Controller
         $items = Repair::where('is_reviewed', 1)
             ->where('is_passed', 1)
             ->where('is_finished', 0)
+            ->where('canceled', 0)
             ->get();
 
         return view('repair.underFinish', compact('items'));
@@ -157,22 +173,133 @@ class RepairController extends Controller
     }
 
     /**
+     * 取消未完工项目
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCancel(Request $request)
+    {
+        $id = (int)$request->input('delete_id');
+        if ($id) {
+            $item = Repair::find($id);
+            $item->canceled = 1;
+
+            if ($item->save()) {
+                return response()->json(['message'=>'操作成功！', 'status'=>1]);
+            }
+        }
+        return response()->json(['message'=>'错误：保存失败...', 'status'=>0]);
+    }
+
+    /**
      * 已完工项目
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function getFinished(Request $request)
     {
-        $year = empty($request->input('year')) ? date('Y') : (int)$request->input('year');
-        $month = empty($request->input('month')) ? date('m') : (int)$request->input('month');
+        $yearMonth = $request->input('year_month');
+        $arr = explode('-', $yearMonth);
+        $year = (isset($arr[0]) && !empty($arr[0])) ? (int) $arr[0] : date('Y');
+        $month = (isset($arr[1]) && !empty($arr[1])) ? (int) $arr[1] : date('m');
 
         $items = Repair::where('is_reviewed', 1)
             ->where('is_passed', 1)
             ->where('is_finished', 1)
+            ->where('canceled', 0)
             ->where('finished_at', '>=', date('Y-m-d', strtotime($year.'-'.$month.'-1')))
             ->where('finished_at', '<', date('Y-m-d', strtotime($year.'-'.($month + 1).'-1')))
             ->get();
 
-        return view('repair.finished', compact('items'));
+        //导出文件
+        if ($request->input('is_export') == 1) {
+            $this->exportFile($items);
+            return response()->redirectTo('repair/finished');
+        }
+
+        return view('repair.finished', compact(['items', 'year', 'month']));
+    }
+
+    /**
+     * 未通过项目
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getUnpassed()
+    {
+        $items = Repair::where('is_reviewed', 1)
+            ->where('is_passed', 0)
+            ->get();
+
+        return view('repair.unpassed', compact('items'));
+    }
+
+    /**
+     * 已取消项目
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getCanceled()
+    {
+        $items = Repair::where('is_reviewed', 1)
+            ->where('is_passed', 1)
+            ->where('canceled', 1)
+            ->get();
+
+        return view('repair.canceled', compact('items'));
+    }
+
+    public function getComment($id)
+    {
+        $item = Repair::find((int)$id);
+        return view('repair.comment', compact('item'));
+    }
+
+    public function postCommentStore(Request $request)
+    {
+        $id = (int)$request->input('id');
+        if ($id) {
+            $item = Repair::find($id);
+            $item->comment = $request->input('comment');
+            if ($item->save()) {
+                return response()->json(['message'=>'操作成功！', 'status'=>1]);
+            }
+        }
+        return response()->json(['message'=>'错误：保存失败...', 'status'=>0]);
+    }
+
+    /**
+     * 导出文件
+     * @param $items
+     */
+    private function exportFile($items)
+    {
+        $filename = '维修项目明细-'.date('Ymd');
+        //标题行
+        $titleRow = ['维修项目明细-'.date('Ymd')];
+        //菜单第一行
+        $menuRow = ['序号','位置/房间号','报修内容','报修人','报修时间','审核人','审核时间','审核说明', '完工时间', '完工时间', '评价'];
+        $data = [
+            $titleRow,
+            $menuRow,
+        ];
+        // 序号
+        $serialNumber = 1;
+        foreach ($items as $item) {
+            $tmp = [
+                $serialNumber++,
+                $item->location,
+                $item->content,
+                $item->name,
+                $item->report_at,
+                $item->reviewer,
+                $item->reviewed_at,
+                $item->review_remark,
+                $item->finished_at,
+                $item->finish_remark,
+                $item->comment,
+            ];
+            $data[] = $tmp;
+        }
+        ExcelController::exportFile($filename, $data);
     }
 
 
