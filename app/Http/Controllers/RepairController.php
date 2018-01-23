@@ -135,6 +135,17 @@ class RepairController extends Controller
         return view('repair.underFinish', compact('items'));
     }
 
+    public function getPrint(Request $request)
+    {
+        $id = (int)$request->input('id');
+        $item = Repair::find($id);
+        if ($item->is_printed == 0) {
+            $item->is_printed = 1;
+            $item->printed_at = date('Y-m-d H:i:s');
+            $item->save();
+        }
+    }
+
     /**
      * 项目完工界面
      * @param $id
