@@ -40,6 +40,5 @@ window.getRepairNotify = function () {
         }
     }, 'json')
 }
-playSound()
 window.getRepairNotify();
 setInterval(window.getRepairNotify, 1000*60*5)

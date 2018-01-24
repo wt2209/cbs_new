@@ -15,8 +15,9 @@ class RepairController extends Controller
     public function getNotify()
     {
         $data['unprinted'] = Repair::where('is_printed', 0)
-            ->where('is_finished', 0)
             ->where('is_passed', 1)
+            ->where('is_printed', 0)
+            ->where('is_finished', 0)
             ->where('canceled', 0)
             ->count();
         $data['unreviewed'] = Repair::where('is_reviewed', 0)

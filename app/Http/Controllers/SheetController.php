@@ -385,7 +385,7 @@ class SheetController extends Controller
                         $currentRow++;
                         $rowNumber++;
                     }
-                    $companyTotal[] = $total['companyName'];
+                    $companyTotal[] = isset($total['companyName']) ? $total['companyName'] : '';
                     $companyTotal[] = '';
                     $companyTotal[] = '';
                     $companyTotal[] = $total['waterBaseTotal'];
