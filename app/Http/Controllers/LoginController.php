@@ -65,6 +65,7 @@ class LoginController extends Controller
                     'user_name'=>$username,
                     'password'=>bcrypt($request->password)
                 ]);*/
-        return view('auth.register', ['message'=>'注册成功！']);
+        $roles = Role::get();
+        return view('auth.register', ['roles'=>$roles,'message'=>'注册成功！']);
     }
 }

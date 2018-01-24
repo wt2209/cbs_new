@@ -11,6 +11,21 @@ use App\Http\Controllers\Controller;
 
 class RepairController extends Controller
 {
+
+    public function getNotify()
+    {
+        $data['unprinted'] = Repair::where('is_printed', 0)
+            ->where('is_finished', 0)
+            ->where('is_passed', 1)
+            ->where('canceled', 0)
+            ->count();
+        $data['unreviewed'] = Repair::where('is_reviewed', 0)
+            ->where('is_finished', 0)
+            ->count();
+        $data['username'] = Auth::user()->user_name;
+        return response()->json($data);
+    }
+
     /**
      * 添加项目
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -75,7 +90,7 @@ class RepairController extends Controller
      */
     public function getUnderReview()
     {
-        $underReviews = Repair::where('is_reviewed', 0)->get();
+        $underReviews = Repair::where('is_reviewed', 0)->orderBy('id','desc')->get();
         return view('repair.underReview', compact('underReviews'));
     }
 
@@ -130,6 +145,7 @@ class RepairController extends Controller
             ->where('is_passed', 1)
             ->where('is_finished', 0)
             ->where('canceled', 0)
+            ->orderBy('id','desc')
             ->get();
 
         return view('repair.underFinish', compact('items'));
@@ -144,6 +160,7 @@ class RepairController extends Controller
             $item->printed_at = date('Y-m-d H:i:s');
             $item->save();
         }
+        return response()->json(['status'=>1]);
     }
 
     /**
@@ -220,6 +237,7 @@ class RepairController extends Controller
             ->where('canceled', 0)
             ->where('finished_at', '>=', date('Y-m-d', strtotime($year.'-'.$month.'-1')))
             ->where('finished_at', '<', date('Y-m-d', strtotime($year.'-'.($month + 1).'-1')))
+            ->orderBy('id','desc')
             ->get();
 
         //导出文件
@@ -239,6 +257,7 @@ class RepairController extends Controller
     {
         $items = Repair::where('is_reviewed', 1)
             ->where('is_passed', 0)
+            ->orderBy('id','desc')
             ->get();
 
         return view('repair.unpassed', compact('items'));
@@ -253,6 +272,7 @@ class RepairController extends Controller
         $items = Repair::where('is_reviewed', 1)
             ->where('is_passed', 1)
             ->where('canceled', 1)
+            ->orderBy('id','desc')
             ->get();
 
         return view('repair.canceled', compact('items'));
@@ -312,6 +332,4 @@ class RepairController extends Controller
         }
         ExcelController::exportFile($filename, $data);
     }
-
-
 }

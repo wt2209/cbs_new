@@ -3,9 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="{{ asset('/css/index.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('/css/notify.css') }}" type="text/css" />
     <title>承包商公寓管理系统</title>
 </head>
 <body>
+
+<audio src="{{ asset('sound/1.wav') }}" id="audio"></audio>
 {{--头部区域--}}
 {{--<div class="header_content">
     <div class="logo">
@@ -98,9 +101,11 @@
                         </li>
                         <li>
                             <a href="{{ url('repair/under-review') }}" target="iframe">待审核项目</a>
+                            <i id="unreviewed" url="{{ url('repair/notify') }}">0</i>
                         </li>
                         <li>
                             <a href="{{ url('repair/under-finish') }}" target="iframe">待完工项目</a>
+                            <i id="unprinted">0</i>
                         </li>
                         <li>
                             <a href="{{ url('repair/finished') }}" target="iframe">已完工项目</a>
@@ -241,6 +246,7 @@
             </li>
             <li class="man_nav">
                 维修管理
+                <i id="totalNotify">0</i>
                 <p class="sub_message">
                     维修相关
                 </p>
@@ -292,6 +298,7 @@
 
 <script src="{{ asset('/js/jquery-1.11.3.js') }}"></script>
 <script src="{{ asset('/js/index.js') }}"></script>
+<script src="{{ asset('/js/repair-notify.js') }}"></script>
 <script>
     //设置主内容区域以及左边栏的高度
     function setContentHeight() {

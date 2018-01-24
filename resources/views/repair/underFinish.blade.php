@@ -115,7 +115,6 @@
                     + ' '+myDate.getHours() + ':' + myDate.getMinutes();
 
                 var str = '';
-
                 table.addClass('border-black');
                 table.removeClass('table-bordered');
                 printTitle.removeClass('hidden');
@@ -142,10 +141,10 @@
                 table.removeClass('border-black');
                 table.addClass('table-bordered');
 
-                $.get(url, 'id='+id, function(data){
-                    // window.parent.getRepairNotify();
+                $.get(url, 'id='+id, function(){
+                    location.reload()
+                    window.parent.getRepairNotify();
                 }, 'json');
-
             });
         })
     </script>

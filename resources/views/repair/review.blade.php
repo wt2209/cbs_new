@@ -83,6 +83,7 @@
                     $.post('{{ url('repair/review-for-one') }}', $('#form').serialize(), function(e){
                         maskHide();
                         popdown({'message':e.message, 'status': e.status, 'callback':function(){
+                            window.parent.getRepairNotify();
                             /*返回并刷新原页面*/
                             location.href = document.referrer;
                         }});

@@ -77,9 +77,6 @@
                             /*返回并刷新原页面*/
                             location.href = document.referrer;
                         }});
-                        if (e.status) {
-                            $('#form')[0].reset();
-                        }
                         s = true;
                     }, 'json');
                 }

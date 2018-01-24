@@ -102,6 +102,7 @@
                         maskHide();
                         popdown({'message':e.message, 'status': e.status});
                         if (e.status) {
+                            window.parent.getRepairNotify();
                             $('#form')[0].reset();
                         }
                         s = true;

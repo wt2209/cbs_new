@@ -1,0 +1,28 @@
+li i {
+    display: block;
+    position: absolute;
+    background: red;
+    color: #fff;
+    line-height: 0.8em;
+    padding:3px 3px;
+    font-style: normal;
+    font-size: 10px;
+    border-radius:6px;
+    font-weight: bold;
+}
+
+.list_detail li{
+    position: relative;
+}
+.list_detail li i {
+
+    left:85px;
+    top:5px;
+}
+.man_nav{
+    position: relative;
+}
+.man_nav i{
+    left:80px;
+    top:4px;
+}
