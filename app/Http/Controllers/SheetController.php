@@ -399,7 +399,8 @@ class SheetController extends Controller
                     $companyTotal[] = $total['electricMoneyTotal'] + $total['waterMoneyTotal'] + $total['diningMoney'];
                     $companyTotal[] = $globalCompany[$companyId]['roomRentMoney'];
 
-                    $globalCompany[$companyId]['livingRoomUtility'] = $total['electricMoneyTotal'] + $total['waterMoneyTotal'];
+                    $globalCompany[$companyId]['livingRoomElectric'] = $total['electricMoneyTotal'];
+                    $globalCompany[$companyId]['livingRoomWater'] = $total['waterMoneyTotal'];
                     $globalCompany[$companyId]['diningRoomUtility'] = $total['diningMoney'];
 
                     $currentRow++;
@@ -452,34 +453,39 @@ class SheetController extends Controller
         })->sheet('汇总',function ($sheet) use(&$globalCompany, $date){
             $companies = DB::table('company')->where('is_quit', 0)->get();
             $data = [
-                [$date['year'].'.'.$date['month'].'月份承包商公寓水电及服务费汇总表','','','','','','',''],
-                ['单位：服务中心', '', '', '', '', '', '日期：'.date('Y-m-d'),''],
-                ['序号','单位名称','水电费(元)','','','住房服务费(元)','总计(元)','备 注'],
-                ['','','住宿水电费','餐厅水电费','合计','','',''],
+                [$date['year'].'.'.$date['month'].'月份承包商公寓水电及服务费汇总表','','','','','','','',''],
+                ['单位：服务中心', '', '', '', '', '', '', '日期：'.date('Y-m-d'),''],
+                ['序号','单位名称','水电费(元)','','','','住房服务费(元)','总计(元)','备 注'],
+                ['','','住宿电费','住宿水费','餐厅水电费','合计','','',''],
             ];
             // 序号
             $serialNumber = 1;
             $total = [
-                'livingUtility' => 0,
+                'livingElectric' => 0,
+                'livingWater' => 0,
                 'diningUtility' => 0,
                 'livingAndDiningUtility' => 0,
                 'rentMoney' => 0,
                 'companyTotal' => 0,
             ];
             foreach ($companies as $company) {
-                $livingUtility = isset($globalCompany[$company->company_id]['livingRoomUtility'])
-                    ? $globalCompany[$company->company_id]['livingRoomUtility']
+                $livingElectric = isset($globalCompany[$company->company_id]['livingRoomElectric'])
+                    ? $globalCompany[$company->company_id]['livingRoomElectric']
+                    : 0;
+                $livingWater = isset($globalCompany[$company->company_id]['livingRoomWater'])
+                    ? $globalCompany[$company->company_id]['livingRoomWater']
                     : 0;
                 $diningUtility = isset($globalCompany[$company->company_id]['diningRoomUtility'])
                     ? $globalCompany[$company->company_id]['diningRoomUtility']
                     : 0;
-                $livingAndDiningUtility = $livingUtility + $diningUtility;
+                $livingAndDiningUtility = $livingElectric + $livingWater + $diningUtility;
                 $rentMoney = isset($globalCompany[$company->company_id]['roomRentMoney'])
                     ? $globalCompany[$company->company_id]['roomRentMoney']
                     : 0;
                 $companyTotal = $livingAndDiningUtility + $rentMoney;
 
-                $total['livingUtility'] += $livingUtility;
+                $total['livingElectric'] += $livingElectric;
+                $total['livingWater'] += $livingWater;
                 $total['diningUtility'] += $diningUtility;
                 $total['livingAndDiningUtility'] += $livingAndDiningUtility;
                 $total['rentMoney'] += $rentMoney;
@@ -488,7 +494,8 @@ class SheetController extends Controller
                 $data[] = [
                     $serialNumber,
                     $company->company_name,
-                    $livingUtility,
+                    $livingElectric,
+                    $livingWater,
                     $diningUtility,
                     $livingAndDiningUtility,
                     $rentMoney,
@@ -500,7 +507,8 @@ class SheetController extends Controller
             $data[] = [
                 '合计',
                 '',
-                $total['livingUtility'],
+                $total['livingElectric'],
+                $total['livingWater'],
                 $total['diningUtility'],
                 $total['livingAndDiningUtility'],
                 $total['rentMoney'],
@@ -527,15 +535,15 @@ class SheetController extends Controller
                 ));
 
             });
-            $sheet->mergeCells('A1:H1');
+            $sheet->mergeCells('A1:I1');
             $sheet->mergeCells('A2:B2');
             $sheet->mergeCells('G2:H2');
-            $sheet->mergeCells('C3:E3');
+            $sheet->mergeCells('C3:F3');
             $sheet->mergeCells('A3:A4');
             $sheet->mergeCells('B3:B4');
-            $sheet->mergeCells('F3:F4');
             $sheet->mergeCells('G3:G4');
             $sheet->mergeCells('H3:H4');
+            $sheet->mergeCells('I3:I4');
             $sheet->mergeCells('A'.($serialNumber + 4).':B'.($serialNumber + 4));
 
             $sheet->setWidth('A', 5);
@@ -546,10 +554,11 @@ class SheetController extends Controller
             $sheet->setWidth('F', 11);
             $sheet->setWidth('G', 11);
             $sheet->setWidth('H', 28);
+            $sheet->setWidth('I', 24);
 
             $sheet->setHeight(1, 25);
-            $sheet->setBorder('A3:H'.($serialNumber + 4), 'thin');
-            $sheet->cells('A1:H' .($serialNumber + 4), function($cells) {
+            $sheet->setBorder('A3:I'.($serialNumber + 4), 'thin');
+            $sheet->cells('A1:I' .($serialNumber + 4), function($cells) {
                 $cells->setAlignment('center');
                 $cells->setValignment('center');
 
