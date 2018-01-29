@@ -88,7 +88,7 @@
     </div>
 @endsection
 @section('modal')
-        <!-- delete modal -->
+    <!-- delete modal -->
     <div id="delete-modal" class="modal fade bs-example-modal-sm">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
