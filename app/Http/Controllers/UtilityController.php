@@ -55,7 +55,7 @@ class UtilityController extends Controller{
                 $whereArr[] = "cbs_company.company_name like '%{$companyName}%'";
             }
         } else { //房间号不空，不用处理公司名
-            $whereArr[] = 'cbs_room.building = ' . $roomName;
+            $whereArr[] = 'cbs_room.room_name = ' . $roomName;
         }
         if (!empty($yearMonth)) {
             $tmp = explode('-', $yearMonth);
