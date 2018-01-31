@@ -50,24 +50,22 @@ class CompanyLogController extends Controller
     }
 
     /**
-     * 生成房间变动日志
      * @param $companyId
+     * @param $isNewCompany
      * @param $userId
      * @param array $oldRooms
      * @param array $newRooms
      */
-    static public function log($companyId,$isNewCompany,  $userId, $oldRooms=[], $newRooms=[])
+    static public function log($companyId, $isNewCompany, $userId, $oldRooms=[], $newRooms=[])
     {
         $results = [];
         foreach($oldRooms as $oldRoom) {
             $tmpArr = explode('_', $oldRoom);
-            $results[$tmpArr[0]]['pre_rent_type'] = $tmpArr[1];
-            $results[$tmpArr[0]]['pre_gender'] = $tmpArr[2];
+            $results[$tmpArr[0]]['pre_gender'] = $tmpArr[1];
         }
         foreach($newRooms as $newRoom) {
             $tmpArr = explode('_', $newRoom);
-            $results[$tmpArr[0]]['new_rent_type'] = $tmpArr[1];
-            $results[$tmpArr[0]]['new_gender'] = $tmpArr[2];
+            $results[$tmpArr[0]]['new_gender'] = $tmpArr[1];
         }
 
         foreach ($results as $roomId => $result) {

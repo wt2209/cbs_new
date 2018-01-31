@@ -52,99 +52,85 @@
         var bStatus = false;
         $(function(){
             maskShow();
-            $.get('{{ url('room/all-rent-type') }}', '', function(rentTypeData){
-                var rentType = rentTypeData;
-                $.get('{{ url('room/all-empty-room') }}', '', function(data){
-                    var livingStr = '居住用房：<br>';
-                    var diningStr = '餐厅用房：<br>';
-                    var serviceStr = '服务用房：<br>';
-                    @if ($livingRooms)
-                        @foreach($livingRooms as $livingRoom)
-                            livingStr += '<div class="col-lg-2" style="width:300px;"> ';
-                            livingStr += '<div class="input-group">';
-                            livingStr += '<label class="input-group-addon">';
-                            livingStr += '<input type="checkbox" checked value="{{$livingRoom->room_id}}">&nbsp;{{$livingRoom->room_name}}';
-                            livingStr += '</label>';
-                            livingStr += '<select class="form-control" name="roomType[{{$livingRoom->company_id}}]">';
-                            for (i=0;i<rentType['length']; i++) {
-                                if (rentType[i]['rent_type_id'] == '{{$livingRoom->rent_type_id}}') {
-                                    livingStr += '<option selected value="'+rentType[i]['rent_type_id']+'">'+rentType[i]['person_number']+'人间</option>;'
-                                } else
-                                    livingStr += '<option value="'+rentType[i]['rent_type_id']+'">'+rentType[i]['person_number']+'人间</option>;'
-                            }
-                            livingStr += '</select>';
-                            livingStr += '<span class="input-group-addon">';
-                            if ('1' == '{{$livingRoom->gender}}') {
-                                livingStr += '<label class="no-bold"><input type="radio" checked value="1" checked name="gender[{{$livingRoom->room_id}}]">男</label>&nbsp;';
-                                livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender[{{$livingRoom->room_id}}]">女</label>';
-                            } else if ('2' == '{{$livingRoom->gender}}') {
-                                livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender[{{$livingRoom->room_id}}]">男</label>&nbsp;';
-                                livingStr += '<label class="no-bold"><input type="radio" checked value="2" name="gender[{{$livingRoom->room_id}}]">女</label>';
-                            }
-                            livingStr += '</span>';
-                            livingStr += '</div>';
-                            livingStr += '</div>';
-                        @endforeach
-                    @endif
-                    if (data['living']) {
-                        for (var i in data['living']) {
-                            var current = data['living'][i]
-                            livingStr += '<div class="col-lg-2" style="width:300px;">';
-                            livingStr += '<div class="input-group">';
-                            livingStr += '<label class="input-group-addon">';
-                            livingStr += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            livingStr += '</label>';
-                            livingStr += '<select class="form-control" name="roomType['+current['room_id']+']">';
-                            for (i=0;i<rentType['length']; i++) {
-                                livingStr += '<option value="'+rentType[i]['rent_type_id']+'">'+rentType[i]['person_number']+'人间</option>;'
-                            }
-                            livingStr += '</select>';
-                            livingStr += '<span class="input-group-addon">';
-                            livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
-                            livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
-                            livingStr += '</span>';
-                            livingStr += '</div>';
-                            livingStr += '</div>';
+            $.get('{{ url('room/all-empty-room') }}', '', function(data){
+                var livingStr = '居住用房：<br>';
+                var diningStr = '餐厅用房：<br>';
+                var serviceStr = '服务用房：<br>';
+                @if ($livingRooms)
+                    @foreach($livingRooms as $livingRoom)
+                        livingStr += '<div class="col-lg-2" style="width:300px;"> ';
+                        livingStr += '<div class="input-group">';
+                        livingStr += '<label class="input-group-addon">';
+                        livingStr += '<input type="checkbox" checked value="{{$livingRoom->room_id}}">&nbsp;{{$livingRoom->room_name}}';
+                        livingStr += '</label>';
+                        livingStr += '<span class="input-group-addon">';
+                        if ('1' == '{{$livingRoom->gender}}') {
+                            livingStr += '<label class="no-bold"><input type="radio" checked value="1" checked name="gender[{{$livingRoom->room_id}}]">男</label>&nbsp;';
+                            livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender[{{$livingRoom->room_id}}]">女</label>';
+                        } else if ('2' == '{{$livingRoom->gender}}') {
+                            livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender[{{$livingRoom->room_id}}]">男</label>&nbsp;';
+                            livingStr += '<label class="no-bold"><input type="radio" checked value="2" name="gender[{{$livingRoom->room_id}}]">女</label>';
                         }
+                        livingStr += '</span>';
+                        livingStr += '<span class="input-group-addon">{{$livingRoom->person_number}}人间</span>';
+                        livingStr += '</div>';
+                        livingStr += '</div>';
+                    @endforeach
+                @endif
+                if (data['living']) {
+                    for (var i in data['living']) {
+                        var current = data['living'][i]
+                        livingStr += '<div class="col-lg-2" style="width:300px;">';
+                        livingStr += '<div class="input-group">';
+                        livingStr += '<label class="input-group-addon">';
+                        livingStr += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        livingStr += '</label>';
+                        livingStr += '<span class="input-group-addon">';
+                        livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
+                        livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
+                        livingStr += '</span>';
+                        livingStr += '<span class="input-group-addon">'+current['person_number']+'人间</span>';
+                        livingStr += '</div>';
+                        livingStr += '</div>';
                     }
-                    $('#living').html(livingStr);
+                }
+                $('#living').html(livingStr);
 
-                    @if ($diningRooms)
+                @if ($diningRooms)
                         @foreach($diningRooms as $diningRoom)
-                            diningStr+='<label class="no-bold">';
-                            diningStr+='<input type="checkbox" checked value="{{$diningRoom->room_id}}">&nbsp;{{$diningRoom->room_name}}';
-                            diningStr+='</label><br>';
-                        @endforeach
-                    @endif
-                    if (data['dining']) {
-                        for (var i in data['dining']) {
-                            var current = data['dining'][i];
-                            diningStr+='<label class="no-bold">';
-                            diningStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            diningStr+='</label><br>';
-                        }
+                    diningStr+='<label class="no-bold">';
+                diningStr+='<input type="checkbox" checked value="{{$diningRoom->room_id}}">&nbsp;{{$diningRoom->room_name}}';
+                diningStr+='</label><br>';
+                @endforeach
+                        @endif
+                if (data['dining']) {
+                    for (var i in data['dining']) {
+                        var current = data['dining'][i];
+                        diningStr+='<label class="no-bold">';
+                        diningStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        diningStr+='</label><br>';
                     }
-                    $('#dining').html(diningStr);
+                }
+                $('#dining').html(diningStr);
 
-                    @if ($serviceRooms)
+                @if ($serviceRooms)
                         @foreach($serviceRooms as $serviceRoom)
-                            serviceStr+='<label class="no-bold">';
-                            serviceStr+='<input type="checkbox" checked value="{{$serviceRoom->room_id}}">&nbsp;{{$serviceRoom->room_name}}';
-                            serviceStr+='</label><br>';
-                        @endforeach
-                    @endif
-                    if (data['service']) {
-                        for (var i in data['service']) {
-                            var current = data['service'][i];
-                            serviceStr+='<label class="no-bold">';
-                            serviceStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            serviceStr+='</label><br>';
-                        }
+                    serviceStr+='<label class="no-bold">';
+                serviceStr+='<input type="checkbox" checked value="{{$serviceRoom->room_id}}">&nbsp;{{$serviceRoom->room_name}}';
+                serviceStr+='</label><br>';
+                @endforeach
+                        @endif
+                if (data['service']) {
+                    for (var i in data['service']) {
+                        var current = data['service'][i];
+                        serviceStr+='<label class="no-bold">';
+                        serviceStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        serviceStr+='</label><br>';
                     }
-                    $('#service').html(serviceStr);
-                    maskHide()
-                }, 'json')
-            });
+                }
+                $('#service').html(serviceStr);
+                maskHide()
+            }, 'json')
 
             $('#submit').click(function(){
                 sRoomDetail = '';
@@ -158,19 +144,19 @@
                                 iGender = $(this).val();
                             }
                         });
-                        //格式为：1_1_1 , 'room_id'_'rent_type_id'_'gender',
-                        sRoomDetail += iRoomId+'_'+iType+'_'+iGender+'|';
+                        //格式为：1_1 , 'room_id'_'gender',
+                        sRoomDetail += iRoomId+'_'+iGender+'|';
                     }
                 })
                 $('#dining').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
-                        //格式为：1_1_1 , 'room_id'_'rent_type_id'_'gender', 后两位数字是几无所谓，只求统一格式
-                        sRoomDetail += $(this).val() + '_1_1|';
+                        //格式为：1_1_1 , 'room_id'_'gender', 后两位数字是几无所谓，只求统一格式
+                        sRoomDetail += $(this).val() + '_1|';
                     }
                 })
                 $('#service').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
-                        sRoomDetail += $(this).val() + '_1_1|';
+                        sRoomDetail += $(this).val() + '_1|';
                     }
                 })
 

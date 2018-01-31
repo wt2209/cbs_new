@@ -23,8 +23,9 @@ class ConfigController extends Controller
             'precision'=>config('cbs.precision'),
             'electricMoney'=>config('cbs.electricMoney'),
             'waterMoney'=>config('cbs.waterMoney'),
-            'electricMax'=>config('cbs.electricMax'),
-            'waterMax'=>config('cbs.waterMax'),
+            'person_6'=>config('cbs.person_6'),
+            'person_8'=>config('cbs.person_8'),
+            'person_12'=>config('cbs.person_12'),
         ]);
     }
 
@@ -35,8 +36,9 @@ class ConfigController extends Controller
             'precision' => 'required|integer',
             'electric_money' => 'required|numeric',
             'water_money' => 'required|numeric',
-            'electric_max' => 'required|numeric',
-            'water_max' => 'required|numeric',
+            'person_6'=>'required|numeric',
+            'person_8'=>'required|numeric',
+            'person_12'=>'required|numeric'
         ]);
 
         $config = '<?php';
@@ -44,8 +46,9 @@ class ConfigController extends Controller
         $config .= "'precision'=>'{$request->precision}',";
         $config .= "'electricMoney'=>'{$request->electric_money}',";
         $config .= "'waterMoney'=>'{$request->water_money}',";
-        $config .= "'electricMax'=>'{$request->electric_max}',";
-        $config .= "'waterMax'=>'{$request->water_max}',";
+        $config .= "'person_6'=>'{$request->person_6}',";
+        $config .= "'person_8'=>'{$request->person_8}',";
+        $config .= "'person_12'=>'{$request->person_12}',";
         $config .= "];";
 
         if (is_file(config_path('cbs.php'))) {

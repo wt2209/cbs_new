@@ -59,56 +59,49 @@
         var bStatus = false;
         $(function(){
             maskShow();
-            $.get('{{ url('room/all-rent-type') }}', '', function(rentTypeData){
-                var rentType = rentTypeData;
-                $.get('{{ url('room/all-empty-room') }}', '', function(data){
-                    var livingStr = '居住用房：<br>';
-                    var diningStr = '餐厅用房：<br>';
-                    var serviceStr = '服务用房：<br>';
-                    if (data['living']) {
-                        for (var i in data['living']) {
-                            var current = data['living'][i]
-                            livingStr += '<div class="col-lg-2"  style="width:300px;">';
-                            livingStr += '<div class="input-group">';
-                            livingStr += '<label class="input-group-addon">';
-                            livingStr += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            livingStr += '</label>';
-                            livingStr += '<select class="form-control" name="roomType['+current['room_id']+']">';
-                            for (i=0;i<rentType['length']; i++) {
-                                livingStr += '<option value="'+rentType[i]['rent_type_id']+'">'+rentType[i]['person_number']+'人间</option>;'
-                            }
-                            livingStr += '</select>';
-                            livingStr += '<span class="input-group-addon">';
-                            livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
-                            livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
-                            livingStr += '</span>';
-                            livingStr += '</div>';
-                            livingStr += '</div>';
-                        }
-                        $('#living').html(livingStr);
+            $.get('{{ url('room/all-empty-room') }}', '', function(data){
+                var livingStr = '居住用房：<br>';
+                var diningStr = '餐厅用房：<br>';
+                var serviceStr = '服务用房：<br>';
+                if (data['living']) {
+                    for (var i in data['living']) {
+                        var current = data['living'][i]
+                        livingStr += '<div class="col-lg-2"  style="width:300px;">';
+                        livingStr += '<div class="input-group">';
+                        livingStr += '<label class="input-group-addon">';
+                        livingStr += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        livingStr += '</label>';
+                        livingStr += '<span class="input-group-addon">';
+                        livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
+                        livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
+                        livingStr += '</span>';
+                        livingStr += '<span class="input-group-addon">'+current['person_number']+'人间</span>';
+                        livingStr += '</div>';
+                        livingStr += '</div>';
                     }
-                    if (data['dining']) {
-                        for (var i in data['dining']) {
-                            var current = data['dining'][i];
-                            diningStr+='<label class="no-bold">';
-                            diningStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            diningStr+='</label><br>';
-                        }
-                        $('#dining').html(diningStr);
+                    $('#living').html(livingStr);
+                }
+                if (data['dining']) {
+                    for (var i in data['dining']) {
+                        var current = data['dining'][i];
+                        diningStr+='<label class="no-bold">';
+                        diningStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        diningStr+='</label><br>';
                     }
+                    $('#dining').html(diningStr);
+                }
 
-                    if (data['service']) {
-                        for (var i in data['service']) {
-                            var current = data['service'][i];
-                            serviceStr+='<label class="no-bold">';
-                            serviceStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                            serviceStr+='</label><br>';
-                        }
-                        $('#service').html(serviceStr);
+                if (data['service']) {
+                    for (var i in data['service']) {
+                        var current = data['service'][i];
+                        serviceStr+='<label class="no-bold">';
+                        serviceStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        serviceStr+='</label><br>';
                     }
-                    maskHide()
-                }, 'json')
-            });
+                    $('#service').html(serviceStr);
+                }
+                maskHide()
+            }, 'json')
 
             $('#submit').click(function(){
                 sRoomDetail = '';
@@ -122,19 +115,19 @@
                                 iGender = $(this).val();
                             }
                         });
-                        //格式为：1_1_1 , 'room_id'_'rent_type_id'_'gender',
-                        sRoomDetail += iRoomId+'_'+iType+'_'+iGender+'|';
+                        //格式为：1_1 , 'room_id'_'gender',
+                        sRoomDetail += iRoomId+'_'+iGender+'|';
                     }
                 })
                 $('#dining').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
-                        //格式为：1_1_1 , 'room_id'_'rent_type_id'_'gender', 后两位数字是几无所谓，只求统一格式
-                        sRoomDetail += $(this).val() + '_1_1|';
+                        //格式为：1_1 , 'room_id'_'gender', 后两位数字是几无所谓，只求统一格式
+                        sRoomDetail += $(this).val() + '_1|';
                     }
                 })
                 $('#service').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
-                        sRoomDetail += $(this).val() + '_1_1|';
+                        sRoomDetail += $(this).val() + '_1|';
                     }
                 })
 

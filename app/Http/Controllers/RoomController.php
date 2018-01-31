@@ -33,30 +33,20 @@ class RoomController extends Controller
         $rooms = Room::where('company_id', 0)->get();
         $return = [];
         foreach ($rooms as $room) {
+            $tmp = [
+                'room_id'=>$room->room_id,
+                'room_name'=>$room->room_name,
+                'person_number'=>$room->person_number
+            ];
             switch ($room['room_type']) {
                 case '1':
-                    $return['living'][] = [
-                        'room_id'=>$room->room_id,
-                        'room_name'=>$room->room_name,
-                        'rent_type_id'=>$room->rent_type_id,
-                        'person_number'=>$room->rentType->person_number
-                    ];
+                    $return['living'][] = $tmp;
                     break;
                 case '2':
-                    $return['dining'][] = [
-                        'room_id'=>$room->room_id,
-                        'room_name'=>$room->room_name,
-                        'rent_type_id'=>$room->rent_type_id,
-                        'person_number'=>$room->rentType->person_number
-                    ];
+                    $return['dining'][] = $tmp;
                     break;
                 case '3':
-                    $return['service'][] = [
-                        'room_id'=>$room->room_id,
-                        'room_name'=>$room->room_name,
-                        'rent_type_id'=>$room->rent_type_id,
-                        'person_number'=>$room->rentType->person_number
-                    ];
+                    $return['service'][] = $tmp;
                     break;
             }
         }
@@ -66,10 +56,14 @@ class RoomController extends Controller
     /*
      * 所有住房
      **/
-    public function getLivingRoom()
+    public function getLivingRoom(Request $request)
     {
+        $building = $request->input('building') ? $request->input('building') : '1';
+        $rooms = Room::where('room_type',1)
+            ->where('building', $building)
+            ->get();
         $count = $this->countRoomNumber('living');
-        return view('room.livingRoom', ['rooms' => Room::where('room_type',1)->paginate(config('cbs.pageNumber')), 'count'=>$count]);
+        return view('room.livingRoom', ['rooms' => $rooms, 'count'=>$count]);
     }
 
     /*

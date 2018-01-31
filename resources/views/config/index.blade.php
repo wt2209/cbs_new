@@ -58,16 +58,23 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>电表最大值</th>
+                    <th>6人间费用</th>
                     <td>
-                        <input  class="form-control" type="text" name="electric_max" value="{{ $electricMax }}">
+                        <input  class="form-control" type="text" name="person_6" value="{{ $person_6 }}">
                     </td>
                     <td></td>
                 </tr>
                 <tr>
-                    <th>水表最大值</th>
+                    <th>8人间费用</th>
                     <td>
-                        <input  class="form-control" type="text" name="water_max" value="{{ $waterMax }}">
+                        <input  class="form-control" type="text" name="person_8" value="{{ $person_8 }}">
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>12人间费用</th>
+                    <td>
+                        <input  class="form-control" type="text" name="person_12" value="{{ $person_12 }}">
                     </td>
                     <td></td>
                 </tr>

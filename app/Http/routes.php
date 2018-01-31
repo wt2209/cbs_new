@@ -19,6 +19,7 @@ Route::get('/register', 'LoginController@getRegister')->middleware(['my.auth']);
 Route::post('/register', 'LoginController@postRegister')->middleware(['my.auth']);
 //首页
 Route::get('/index', 'IndexController@getIndex');
+Route::get('/', 'IndexController@getIndex');
 
 //欢迎页
 Route::get('/welcome' ,'IndexController@getWelcome');

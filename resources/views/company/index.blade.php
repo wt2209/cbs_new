@@ -38,58 +38,80 @@
             </div>
         </div>
     </nav>
-    <div class="function-area">
-        <button class="btn btn-success btn-sm" onclick="javascript:location='{{ url('company/add') }}';">新公司入住</button>
-    </div>
 @endsection
 @section('content')
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-condensed">
-            <thead>
-            <tr class="active">
-                <th>公司名</th>
-                <th>日常联系人</th>
-                <th>联系人电话</th>
-                <th>入住时间</th>
-                <th>居住房间个数</th>
-                <th>备注</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            @foreach($companies as $company)
-                <tr>
-                    <td>
-                        {{ $company->company_name }}
-                    </td>
-                    <td>{{ $company->linkman }}</td>
-                    <td>{{ $company->linkman_tel }}</td>
-                    <td>{{ substr($company->created_at, 0, 10) }}</td>
-                    <td>
-                        {{ isset($count['livingRoomNumber'][$company->company_id]) ?
-                            $count['livingRoomNumber'][$company->company_id] :
-                            0 }}
-                    </td>
-                    <td>{{ $company->company_remark }}</td>
-                    <td>
-                        <a href="{{ url('company/company-detail/'.$company->company_id) }}" class="btn btn-info btn-xs" >详细</a>
-                        <a href="{{ url('company/company-utility/'.$company->company_id) }}" class="btn btn-primary btn-xs">水电</a>
-                        <a href="{{ url('punish/create/'.$company->company_id) }}" class="btn btn-primary btn-xs">处罚</a>
-                        <a href="{{ url('company/change-rooms/'.$company->company_id) }}" class="btn btn-success btn-xs">调房</a>
-                        <a href="{{ url('company/edit/'.$company->company_id) }}" class="btn btn-success btn-xs">修改</a>
-                        <button  delete_id="{{ $company->company_id }}" class="btn btn-danger btn-xs delete-button">退租</button>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-        {!! $companies->appends([
-                'company_name'=>isset($_GET['company_name']) ? $_GET['company_name'] : '',
-                'person_name'=>isset($_GET['person_name']) ? $_GET['person_name'] : ''
-            ])->render() !!}
-    </div>
-@endsection
-@section('modal')
+    @foreach($companies as $company)
+        <div class="company">
+            <div class="title">
+                <h3>
+                    {{ $company->company_name }}
+                </h3>
+                <span class="company-description">{{ $company->company_description }}</span>
+            </div>
+            <div class="company-content">
+                <div class="l">
+                    <p>
+                        <strong>日常联系人：</strong>
+                        <span>{{ $company->linkman }}</span><br/>
+                    </p>
+                    <p>
+                        <strong>联系人电话：</strong>
+                        <span>{{ $company->linkman_tel }}</span>
+                    </p>
+                </div>
+                <div class="r">
+                    <p>
+                        <strong>公司负责人：</strong>
+                        <span>{{ $company->manager }}</span><br/>
+                    </p>
+                    <p>
+                        <strong>负责人电话：</strong>
+                        <span>{{ $company->manager_tel }}</span>
+                    </p>
+                </div>
+                <div class="down">
+                    <p><strong>入住时间：</strong><span>{{substr($company->created_at, 0, 10)}}</span></p>
+                    <strong>所居住房间：</strong>
+                    {{--<p class="all-rooms">
+                        @if (isset($rooms[$company->company_id]))
+                            @if (count($rooms[$company->company_id]) <= 8)
+                                @foreach($rooms[$company->company_id] as $room)
+                                    <a href="" class="company-room">{{ $room }}</a>
+                                @endforeach
+                            @else
+                                @for($i=0; $i<8; $i++)
+                                    <a href="" class="company-room">{{ $rooms[$company->company_id][$i] }}</a>
+                                @endfor
+                                <a href="" class="more">更多>></a>
+                            @endif
+                        @endif
+                    </p>--}}
+                    <p class="all-rooms">
+                        @if ($company->rooms)
+                            {{--房间多于8个--}}
+                            @foreach($company->rooms as $key=>$room)
+                                @if ($key < 8)
+                                    <a href="javascript:;" class="company-room">{{ $room->room_name }}</a>
+                                @endif
+                            @endforeach
+                            <a href="{{ url('company/company-detail/'.$company->company_id) }}" class="more" >详细>></a>
+                        @endif
+                    </p>
+                    <strong>备注：</strong>
+                    <p class="company-remark">{{ $company->company_remark }}</p>
+                    <div class="func">
+                        <a href="{{ url('punish/create/'.$company->company_id) }}" class="btn btn-danger btn-xs">处罚</a>
+                        <a href="{{ url('company/change-rooms/'.$company->company_id) }}" class="btn btn-success btn-xs">调整房间</a>
+                        <a href="{{ url('company/edit/'.$company->company_id) }}" class="btn btn-warning btn-xs">修改</a>
+                        <a href="{{ url('company/quit/'.$company->company_id) }}" class="btn btn-danger btn-xs">退租</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
     <!-- delete modal -->
-    <div id="delete-modal" class="modal fade bs-example-modal-sm">
+    <div id="modal" class="modal bs-example-modal-sm">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -102,21 +124,19 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
+                    <button id="modal-confirm" type="button" class="btn btn-primary">确认</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
 @section('bottom')
     <p>共有 {{ $count['company'] }} 个公司</p>
-    <p>共占用 {{ $count['livingRoom'] }} 个居住房间，{{ $count['diningRoom'] }} 个餐厅，{{ $count['serviceRoom'] }} 个服务用房</p>
+    <p>共占用 {{ $count['livingRoom'] }} 个房间</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
-    <script>
-        ajaxDelete('{{ url('company/quit') }}')
-    </script>
 @endsection

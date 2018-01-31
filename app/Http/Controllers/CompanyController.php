@@ -190,7 +190,6 @@ class CompanyController extends Controller
         } else {
             //错误，回滚事务
             DB::rollBack();
-            //TODO  好好研究一下response  重构一下302 等问题
             return response()->redirectTo(url('common/302'));
         }
     }
@@ -258,7 +257,7 @@ class CompanyController extends Controller
      */
     public function postStoreSelectedRooms(Request $request)
     {
-        //$roomDetails格式 : 1_1_2|2_1_2|3_2_1 ('room_id'_'rent_type_id'_'gender')
+        //$roomDetails格式 : 1_2|2_1|3_1 ('room_id'_'gender')
         $this->newRooms = explode('|', htmlspecialchars(strip_tags($request->roomDetails)));
         $companyId = intval($request->company_id);
         //是否是新公司入住
@@ -267,27 +266,22 @@ class CompanyController extends Controller
         //旧房间
         $oldRooms = Room::where('company_id', $companyId)->get();
         foreach ($oldRooms as $oldRoom) {
-            $this->oldRooms[] = $oldRoom->room_id . '_' .$oldRoom->rent_type_id . '_' .$oldRoom->gender;
+            $this->oldRooms[] = $oldRoom->room_id . '_' .$oldRoom->gender;
         }
 
         // 清除所有旧房间
-        //TODO 有用  暂时注释
        Room::where('company_id', $companyId)->update([
             'company_id'=>0,
-            'rent_type_id'=>1,
             'gender'=>1
        ]);
 
         //修改房间表
-        //TODO 有用  暂时注释
-
         foreach ($this->newRooms as $currentRoomDetail) {
             $currentRoomDetailArr = explode('_', $currentRoomDetail);
             Room::where('room_id', intval($currentRoomDetailArr[0]))
                 ->update([
                     'company_id'=>$companyId,
-                    'rent_type_id'=>intval($currentRoomDetailArr[1]),
-                    'gender'=>intval($currentRoomDetailArr[2])
+                    'gender'=>intval($currentRoomDetailArr[1])
                 ]);
         }
 
@@ -461,20 +455,14 @@ class CompanyController extends Controller
             'livingRooms'=>$livingRooms,
             'diningRooms'=>$diningRooms,
             'serviceRooms'=>$serviceRooms,
-            'company'=>$company]);
+            'company'=>$company
+        ]);
     }
 
-    public function getQuit(Request $request)
+    public function getQuit($id)
     {
-        //有未交水电
-        if (DB::table('utility')
-            ->where('company_id', $request->delete_id)
-            ->where('is_charged', 0)
-            ->count() > 0) {
-            return response()->json(['message'=>'此公司有未缴水电费，无法退租！', 'status'=>0]);
-        }
-
-        $company = Company::find($request->delete_id);
+        // TODO 所有房间都要退房
+        $company = Company::find(intval($id));
         $company->is_quit = 1;
         $company->save();
         return response()->json(['message'=>'操作成功！', 'status'=>1]);

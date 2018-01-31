@@ -14,7 +14,7 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('room/living-room') }}">
+                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('room/search') }}">
                     <div class="form-group">
                         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                         <input type="hidden" name="room_type" value="1">
@@ -41,33 +41,68 @@
             </div>
         </div>
     </nav>
-    {{--    <div class="function-area">
+{{--    <div class="function-area">
 
-        </div>--}}
+    </div>--}}
 @endsection
 @section('content')
-
-    @foreach($rooms as $room)
-        <div class="room">
-            <div class="title">
-                <h3>
-                    {{$room->room_name}}
-                </h3>
-            </div>
-            <div class="room-content">
-                <div class="company">
-                    {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
-                </div>
-                {{--<strong>备注：</strong>--}}
-                {{--<p class="company-remark">{{ $room->room_remark }}</p>--}}
-                {{--<div class="func">--}}
-                    {{--<a href="{{ url('company/change-rooms/'.$company->company_id) }}" class="btn btn-success btn-xs">调整房间</a>--}}
-                    {{--<a href="{{ url('company/edit/'.$company->company_id) }}" class="btn btn-warning btn-xs">修改</a>--}}
-                    {{--<a href="{{ url('company/quit/'.$company->company_id) }}" class="btn btn-danger btn-xs">退租</a>--}}
-                {{--</div>--}}
-            </div>
-        </div>
-    @endforeach
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr class="active">
+                    <th>房间名</th>
+                    <th>人数</th>
+                    <th>使用状态</th>
+                    <th>所属公司</th> {{--允许有多个公司--}}
+                    <th>性别</th> {{--允许有多个公司--}}
+                    <th>公司联系人</th>{{--若有多个公司，则有多个联系人--}}
+                    <th>联系人电话</th>{{--同上--}}
+                    <th>房间备注</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            @foreach ($rooms as $room)
+                @if ($room->company_id == 0)
+                    {{--空房--}}
+                    <tr>
+                        <td>{{ $room->room_name }}</td>
+                        <td>{{ $room->person_number }}</td>
+                        <td>空房间</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ $room->room_remark }}</td>
+                        <td>
+                            <a href="{{ url('room/edit/'.$room->room_id) }}" class="btn btn-success btn-xs">修改备注</a>
+                            {{--<a href="javascript:;" delete_id="{{ $room->room_id }}" class="btn btn-danger btn-xs delete-button">删除</a>--}}
+                        </td>
+                    </tr>
+                @else
+                    {{--正在使用--}}
+                    <tr>
+                        <td>{{ $room->room_name }}</td>
+                        <td>{{ $room->person_number }}</td>
+                        <td><strong style="color:#0099cc">正在使用</strong></td>
+                        <td>{{ $room->company->company_name }}</td>
+                        <td>{{ $room->gender == 1 ? '男' : '女' }}</td>
+                        <td>{{ $room->company->linkman }}</td>
+                        <td>{{ $room->company->linkman_tel }}</td>
+                        <td>{{ $room->room_remark }}</td>
+                        <td>
+                            <a href="{{ url('room/edit/'.$room->room_id) }}" class="btn btn-success btn-xs">修改备注</a>
+                            {{--<a href="javascript:;" delete_id="{{ $room->room_id }}" class="btn btn-danger btn-xs delete-button">删除</a>--}}
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
+        </table>
+        {!! $rooms->appends([
+                'room_type'=>isset($_GET['room_type']) ? $_GET['room_type'] : 1,
+                'room_name'=>isset($_GET['room_name']) ? $_GET['room_name'] : '',
+                'room_status'=>isset($_GET['room_status']) ? $_GET['room_status'] :0
+            ])->render() !!}
+    </div>
 @endsection
 @section('modal')
     <!-- delete modal -->
@@ -92,8 +127,8 @@
     </div>
 @endsection
 @section('bottom')
-    {{--<p>共有 {{ $count['all'] }} 个房间</p>--}}
-    {{--<p>剩余 {{ $count['empty'] }} 个空房间</p>--}}
+    <p>共有 {{ $count['all'] }} 个房间</p>
+    <p>剩余 {{ $count['empty'] }} 个空房间</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
