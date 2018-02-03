@@ -13,8 +13,28 @@
     <nav class="navbar navbar-default navbar-small">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
+            <div class="navbar-header" style="overflow: visible;">
+
                 <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('room/living-room') }}">
+                    <div class="form-group dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                选择楼号
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li class="dropdown-header">居住用房</li>
+                                <li><a href="#">1#楼</a></li>
+                                <li><a href="#">2#楼</a></li>
+                                <li><a href="#">3#楼</a></li>
+                                <li><a href="#">4#楼</a></li>
+                                <li role="separator" class="divider"></li>
+
+                                <li class="dropdown-header">餐厅</li>
+                                <li><a href="#">综合楼</a></li>
+                                <li role="separator" class="divider"></li>
+                            </ul>
+                    </div>
+
                     <div class="form-group">
                         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                         <input type="hidden" name="room_type" value="1">
@@ -25,25 +45,23 @@
                             <option value="2" @if(isset($_GET['room_status'])&&$_GET['room_status'] == 2) selected=""@endif>空房间</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">搜索</button>&nbsp;&nbsp;或&nbsp;
-                    <button class="btn btn-info btn-sm export">导出到文件</button>
-                    <script>
-                        $('.export').click(function(){
-                            var sParam = 'is_export=1&'+$('form.navbar-form').serialize();
-                            var sUrl = '{{ url('room/search') }}' + '?' + sParam;
-                            maskShow();
-                            window.location = sUrl;
-                            setTimeout(maskHide,2000);
-                            return false;
-                        })
-                    </script>
+                    <button type="submit" class="btn btn-primary">搜索</button>
                 </form>
             </div>
         </div>
     </nav>
-    {{--    <div class="function-area">
-
-        </div>--}}
+    <div class="function-area">
+        <button class="btn btn-success btn-sm export">导出所有房间到文件</button>
+        <script>
+            $('.export').click(function(){
+                var sUrl = '{{ url('room/export') }}';
+                maskShow();
+                window.location = sUrl;
+                setTimeout(maskHide,2000);
+                return false;
+            })
+        </script>
+    </div>
 @endsection
 @section('content')
 

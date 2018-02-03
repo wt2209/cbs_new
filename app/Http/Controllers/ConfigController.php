@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ConfigController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('my.auth');
+    }
     /**
      * Display a listing of the resource.
      *

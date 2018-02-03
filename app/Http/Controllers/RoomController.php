@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\RoomType;
 use Illuminate\Http\Request;
 use DB;
 use App\Http\Requests;
@@ -18,16 +19,11 @@ class RoomController extends Controller
     }
 
 
-    public function getAllRentType()
-    {
-        $rentType = DB::table('rent_type')->get();
-        return response()->json($rentType);
-    }
-
     /**
      * 获取空房间
      * @return \Illuminate\Http\JsonResponse
      */
+    //TODO 还未修改
     public function getAllEmptyRoom()
     {
         $rooms = Room::where('company_id', 0)->get();
@@ -53,35 +49,65 @@ class RoomController extends Controller
         return response()->json($return);
     }
 
-    /*
-     * 所有住房
-     **/
-    public function getLivingRoom(Request $request)
+    /**
+     * 房间明细
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getIndex(Request $request)
     {
-        $building = $request->input('building') ? $request->input('building') : '1';
-        $rooms = Room::where('room_type',1)
-            ->where('building', $building)
+        $structure = $this->getRoomStructure();
+        $firstType = array_keys($structure)[0];
+        $firstBuilding = $structure[$firstType][0];
+
+        $currentType = $request->input('typename') ? $request->input('typename') : $firstType;
+        $currentBuilding = $request->input('building') ? $request->input('building') : $firstBuilding;
+
+        $type = RoomType::where('type_name', $currentType)->first();
+        if ($type) {
+            $rooms = Room::where('type_id', $type->id)
+                ->where('building', $currentBuilding)
+                ->get();
+        }else {
+            $rooms = collect([]);
+        }
+        $count = $this->roomsCount($rooms);
+
+        $roomsWithFloor = $this->roomsGroupByFloor($rooms);
+
+        return view('room.index', compact('structure', 'roomsWithFloor', 'currentBuilding', 'currentType', 'count'));
+    }
+
+    /**
+     * 按楼层分组
+     * @param $rooms
+     * @return mixed
+     */
+    private function roomsGroupByFloor($rooms)
+    {
+        return $rooms->groupBy(function ($room, $key) {
+            if(intval($room['room_name']) > 0 && strlen($room['room_name'])) {
+                return substr($room['room_name'], 1, 2);
+            }
+            return 'whatever';
+        });
+    }
+
+    /**
+     * 获取房间与类型结构
+     * @return array
+     */
+    private function getRoomStructure()
+    {
+        $rooms = Room::groupBy('type_id')
+            ->groupBy('building')
+            ->select('type_id', 'building')
             ->get();
-        $count = $this->countRoomNumber('living');
-        return view('room.livingRoom', ['rooms' => $rooms, 'count'=>$count]);
-    }
-
-    /*
-     * 所有服务用房
-     **/
-    public function getDiningRoom()
-    {
-        $count = $this->countRoomNumber('dining');
-        return view('room.diningRoom', ['rooms' => Room::where('room_type',2)->paginate(config('cbs.pageNumber')), 'count'=>$count]);
-    }
-
-    /*
-     * 所有餐厅
-     **/
-    public function getServiceRoom()
-    {
-        $count = $this->countRoomNumber('service');
-        return view('room.serviceRoom', ['rooms' => Room::where('room_type',3)->paginate(config('cbs.pageNumber')), 'count'=>$count]);
+        $result = [];
+        foreach ($rooms as $room) {
+            $result[$room->type->type_name][] = $room->building;
+        }
+        return $result;
     }
 
 
@@ -94,29 +120,23 @@ class RoomController extends Controller
     {
         $roomName = trim(strip_tags(htmlspecialchars($request->room_name)));
         $roomStatus = intval($request->room_status);
-        $roomType = intval($request->room_type);
 
-        $pageType =  $roomType === 1 ? "living" : ($roomType === 2 ? 'dining' : 'service');
-
-        if (!empty($roomName)) {
-            $whereArr[] = "room_name = '{$roomName}'";
-        }
         if ($roomStatus === 1) {
-            $whereArr[] = "company_id != 0";
+            $model = Room::where('company_id', '<>', "0");
         } elseif ($roomStatus === 2) { //空房间。company_id=0
-            $whereArr[] = "company_id = 0";
+            $model = Room::where('company_id', "0");
+        } else {
+            $model = Room::where('company_id', '>=', 0);
         }
-        $whereArr[] = "room_type = {$roomType}";
-        $where = implode(' and ', $whereArr);
-        //导出文件
-        if ($request->is_export == 1) {
-            $rooms =  Room::whereRaw($where)->get();
-            $this->exportFile($roomType, $rooms);
-            return response()->redirectTo('room/living-room');
+        if (!empty($roomName)) {
+            $model->where('room_name', $roomName);
         }
-        $rooms =  Room::whereRaw($where)->paginate(config('cbs.pageNumber'));
-        $count = $this->countRoomNumber($pageType, $where);
-        return view('room.'. $pageType .'Room', ['rooms' => $rooms, 'count'=>$count]);
+        $rooms =  $model->get();
+        $count = $this->roomsCount($rooms);
+
+        $structure = $this->getRoomStructure();
+        $roomsWithFloor = $this->roomsGroupByFloor($rooms);
+        return view('room.index',  compact('structure', 'roomsWithFloor', 'count'));
     }
 
     /**
@@ -207,9 +227,10 @@ class RoomController extends Controller
     public function postUpdate(Request $request)
     {
         $roomId = intval($request->room_id);
-        $roomRemark = trim(htmlspecialchars(strip_tags($request->room_remark)));
+        $roomRemark = $request->input('room_remark');
 
-        if (DB::table('room')->where('room_id', $roomId)->update(['room_remark'=>$roomRemark])) {
+        $status = DB::table('room')->where('room_id', $roomId)->update(['room_remark'=>$roomRemark]);
+        if ($status) {
             return response()->json(['message'=>'操作成功！', 'status'=>1]);
         }
         return response()->json(['message'=>'失败：数据添加失败，请重试...', 'status'=>0]);
@@ -217,53 +238,36 @@ class RoomController extends Controller
 
     /**
      * 统计房间总数及空房间数
-     * @param null $where 必须满足laravel中where参数的要求
-     * @return array
+     * @param $rooms
+     * @return mixed
      */
-    private function countRoomNumber($type, $where = NULL)
+    private function roomsCount($rooms)
     {
-        switch ($type) {
-            case 'living':
-                $whereArr[] = 'room_type = 1'; //所有住房
-                break;
-            case 'dining':
-                $whereArr[] = 'room_type = 2'; //所有住房
-                break;
-            case 'service':
-                $whereArr[] = 'room_type = 3'; //所有住房
-                break;
-        }
-        if ($where) {
-            $whereArr[] = $where;
-        }
-        $whereStr = implode(' and ', $whereArr);
-
-        $rooms = Room::whereRaw($whereStr)->get();
-        $count['all'] = count($rooms);
-        $count['empty'] = 0;
-        foreach ($rooms as $room) {
-            if ($room->company_id == 0) {
-                $count['empty']++;
-            }
-        }
+        $count['used'] = $rooms->sum(function ($room) {
+            return $room['company_id'] > 0 ? 1 : 0;
+        });
+        $count['total'] = $rooms->count();
+        $count['empty'] = $count['total'] - $count['used'];
         return $count;
     }
 
-    private function exportFile($roomType, $rooms)
+
+    /**
+     * 导出房间明细
+     */
+    public function getExport()
     {
-        if ($roomType == 1) {
-            $filename = '房间明细-'.date('Ymd');
-        }
-        if ($roomType == 2) {
-            $filename = '餐厅明细-'.date('Ymd');
-        }
-        if ($roomType == 3) {
-            $filename = '服务用房明细-'.date('Ymd');
-        }
+        $rooms = Room::with('company')->get();
+        $this->exportFile($rooms);
+    }
+
+    private function exportFile($rooms)
+    {
+        $filename = '房间明细-'.date('Ymd');
         //标题行
         $titleRow = [$filename];
         //菜单第一行
-        $menuRow = ['序号','房间名','状态','所属公司','性别','公司联系人','联系人电话','房间备注'];
+        $menuRow = ['序号','类型','楼号','房间名','状态','所属公司','性别','公司联系人','联系人电话','房间备注'];
         $data = [
             $titleRow,
             $menuRow,
@@ -274,6 +278,8 @@ class RoomController extends Controller
             if ($room->company_id > 0) {
                 $tmp = [
                     $serialNumber++,
+                    $room->type->type_name,
+                    $room->building,
                     $room->room_name,
                     '正在使用',
                     $room->company->company_name,
@@ -285,6 +291,8 @@ class RoomController extends Controller
             } else {
                 $tmp = [
                     $serialNumber++,
+                    $room->type->type_name,
+                    $room->building,
                     $room->room_name,
                     '空房间',
                     '',
@@ -296,6 +304,6 @@ class RoomController extends Controller
             }
             $data[] = $tmp;
         }
-        ExcelController::exportFile($filename, $data);
+        ExcelController::exportFile($filename, $data, '房间明细');
     }
 }

@@ -17,8 +17,17 @@ class Room extends Model
 
 
     //房间与承包商公司一对多关系
-    public function Company()
+    public function company()
     {
         return $this->belongsTo('App\Model\Company', 'company_id', 'company_id');
+    }
+
+    /**
+     * room-type
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function type()
+    {
+        return $this->belongsTo('App\Model\RoomType', 'type_id', 'id');
     }
 }

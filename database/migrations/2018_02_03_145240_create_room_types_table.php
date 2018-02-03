@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRentTypeTable extends Migration
+class CreateRoomTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,11 @@ class CreateRentTypeTable extends Migration
      */
     public function up()
     {
-        Schema::create('rent_type', function (Blueprint $table) {
-            $table->increments('rent_type_id');
-            $table->tinyInteger('person_number');
-            $table->decimal('rent_money');
+        Schema::create('room_type', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('type_name')->default('');
+            $table->string('description')->default('');
+            $table->timestamps();
         });
     }
 
@@ -26,6 +27,6 @@ class CreateRentTypeTable extends Migration
      */
     public function down()
     {
-        Schema::drop('rent_type');
+        Schema::drop('room_type');
     }
 }

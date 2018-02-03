@@ -16,7 +16,6 @@ class PunishController extends Controller
     public function __construct()
     {
         $this->middleware('my.auth');
-        $this->middleware('my.auth');
     }
     /**
      * 已缴费列表

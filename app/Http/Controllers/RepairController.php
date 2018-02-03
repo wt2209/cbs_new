@@ -11,6 +11,10 @@ use App\Http\Controllers\Controller;
 
 class RepairController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('my.auth');
+    }
 
     public function getNotify()
     {

@@ -7,7 +7,7 @@ a:hover {
   left: 0;
   top: 0;
   height: auto;
-  overflow: hidden;
+  /*overflow: hidden;*/
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #ddd;
@@ -103,7 +103,13 @@ table tr.no-border {
 
 /*# sourceMappingURL=index.css.map */
 
-
+.floor{
+  clear:both;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  border-bottom:1px solid rgb(221, 221, 221);
+  overflow: hidden;
+}
 .room {
   width: 130px;
   height: auto;
@@ -113,7 +119,7 @@ table tr.no-border {
   /*background: #D9EDF7;*/
   float: left;
   box-shadow: 0 0 3px 3px #ccc;
-  margin: 3px 10px 20px 3px; }
+  margin: 3px 3px 3px 3px; }
 .room .title {
   position: relative; }
 .room .operation {
@@ -148,6 +154,6 @@ table tr.no-border {
   padding-top:10px;
   text-align: center;
   word-break: normal;
-  height:70px;
+  min-height:70px;
   font-weight: bold;
 }

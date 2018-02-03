@@ -22,11 +22,12 @@ class ExcelController extends Controller
      * 导出文件
      * @param $filename
      * @param $data
+     * @param $sheetName="sheet1"
      */
-    public static function exportFile($filename, $data)
+    public static function exportFile($filename, $data, $sheetName = 'Sheet1')
     {
-        Excel::create($filename, function($excel) use($data) {
-            $excel->sheet('公司明细', function($sheet) use($data){
+        Excel::create($filename, function($excel) use($data, $sheetName) {
+            $excel->sheet($sheetName, function($sheet) use($data){
                 $chars = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
                 $columnChar = $chars[count($data[1]) - 1];
                 $sheet->setAutoSize(true);
@@ -54,7 +55,7 @@ class ExcelController extends Controller
                     $cells->setValignment('center');
                 });
                 // 生成表
-                $sheet->fromArray($data,  null, 'A0', true);
+                $sheet->fromArray($data,  null, 'A1', true, false);
             });
 
         })->download('xls');

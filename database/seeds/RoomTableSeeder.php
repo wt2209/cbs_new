@@ -17,12 +17,13 @@ class RoomTableSeeder extends Seeder
                 for ($j = 1; $j <= $top; $j++) {
                     for ($m = 1; $m <= 17; $m++) {
                         DB::table('room')->insert([
-                            'company_id'=> $j,
+                            'company_id'=> 1,
                             'building'=>$i,
-                            'room_type'=> 1,
+                            'type_id'=> 1,
                             'room_name'=> $i*10000+$j*100+$m,
                             'person_number'=>8,
                             'gender'=>random_int(1,2),
+                            'price'=>768,
                             'room_remark'=> '房间备注'.str_random(10),
                             'created_at'=>date('Y-m-d H:i:s'),
                             'updated_at'=>date('Y-m-d H:i:s'),
@@ -32,10 +33,11 @@ class RoomTableSeeder extends Seeder
             }
             for ($i = 1; $i <= 9; $i++) {
                 DB::table('room')->insert([
-                    'company_id'=> $i,
+                    'company_id'=> 1,
                     'building'=>'综合楼',
-                    'room_type'=> 2,
+                    'type_id'=> 2,
                     'room_name'=> '餐厅'.$i,
+                    'price'=>0,
                     'room_remark'=> '餐厅备注'.str_random(10),
                     'created_at'=>date('Y-m-d H:i:s'),
                     'updated_at'=>date('Y-m-d H:i:s'),
@@ -43,10 +45,11 @@ class RoomTableSeeder extends Seeder
             }
             for ($i = 1; $i <= 5; $i++) {
                 DB::table('room')->insert([
-                    'company_id'=> $i,
+                    'company_id'=> 1,
                     'building'=>'综合楼',
-                    'room_type'=> 3,
+                    'type_id'=> 3,
                     'room_name'=> '办公'.$i,
+                    'price'=>0,
                     'room_remark'=> '办公备注'.str_random(10),
                     'created_at'=>date('Y-m-d H:i:s'),
                     'updated_at'=>date('Y-m-d H:i:s'),
@@ -60,10 +63,11 @@ class RoomTableSeeder extends Seeder
                         DB::table('room')->insert([
                             'company_id'=> 0,
                             'building'=>$i,
-                            'room_type'=> 1,
+                            'type_id'=> 1,
                             'room_name'=> $i*10000+$j*100+$m,
-                            'rent_type_id'=>1,
+                            'person_number'=>8,
                             'gender'=>1,
+                            'price'=>768,
                             'room_remark'=> '',
                             'created_at'=>date('Y-m-d H:i:s'),
                             'updated_at'=>date('Y-m-d H:i:s'),
