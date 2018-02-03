@@ -12,6 +12,7 @@ $(function(){
         //改变左侧内容
         $('.list_item').removeClass('active');
         $('.list_item').eq(index).addClass('active');
+        $('.list_item').eq(index).find('.list_detail li:first a')[0].click()
 /*        //取消最左侧竖导航的效果
         $('.left_back').removeClass('current');*/
     })

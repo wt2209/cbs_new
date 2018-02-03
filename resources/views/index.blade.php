@@ -125,10 +125,10 @@
                     <span>水电费管理</span>
                     <ul class="list_detail">
                         <li>
-                            <a href="{{ url('utility/index') }}" target="iframe">水电费明细</a>
+                            <a href="{{ url('utility/base') }}" target="iframe">水电表底数</a>
                         </li>
                         <li>
-                            <a href="{{ url('utility/base') }}" target="iframe">水电表底数</a>
+                            <a href="{{ url('utility/index') }}" target="iframe">水电费明细</a>
                         </li>
                         <li>
                             <a href="{{ url('utility/add') }}" target="iframe">录入底数</a>

@@ -44,34 +44,34 @@
         <div class="company">
             <div class="title">
                 <h3>
-                    {{ $company->company_name }}
+                    {{ $company['company_name'] }}
                 </h3>
-                <span class="company-description">{{ $company->company_description }}</span>
+                <span class="company-description">{{ $company['count'] }}</span>
             </div>
             <div class="company-content">
                 <div class="l">
                     <p>
                         <strong>日常联系人：</strong>
-                        <span>{{ $company->linkman }}</span><br/>
+                        <span>{{ $company['linkman'] }}</span><br/>
                     </p>
                     <p>
                         <strong>联系人电话：</strong>
-                        <span>{{ $company->linkman_tel }}</span>
+                        <span>{{ $company['linkman_tel'] }}</span>
                     </p>
                 </div>
                 <div class="r">
                     <p>
                         <strong>公司负责人：</strong>
-                        <span>{{ $company->manager }}</span><br/>
+                        <span>{{ $company['manager'] }}</span><br/>
                     </p>
                     <p>
                         <strong>负责人电话：</strong>
-                        <span>{{ $company->manager_tel }}</span>
+                        <span>{{ $company['manager_tel'] }}</span>
                     </p>
                 </div>
                 <div class="down">
-                    <p><strong>入住时间：</strong><span>{{substr($company->created_at, 0, 10)}}</span></p>
-                    <strong>所居住房间：</strong>
+                    <p><strong>入住时间：</strong><span>{{substr($company['created_at'], 0, 10)}}</span></p>
+                    <strong>房间数量：</strong>
                     {{--<p class="all-rooms">
                         @if (isset($rooms[$company->company_id]))
                             @if (count($rooms[$company->company_id]) <= 8)
@@ -87,23 +87,25 @@
                         @endif
                     </p>--}}
                     <p class="all-rooms">
-                        @if ($company->rooms)
+                        {{$company['count']}}
+
+                        {{--@if ($company->rooms)--}}
                             {{--房间多于8个--}}
-                            @foreach($company->rooms as $key=>$room)
-                                @if ($key < 8)
-                                    <a href="javascript:;" class="company-room">{{ $room->room_name }}</a>
-                                @endif
-                            @endforeach
-                            <a href="{{ url('company/company-detail/'.$company->company_id) }}" class="more" >详细>></a>
-                        @endif
+                            {{--@foreach($company->rooms as $key=>$room)--}}
+                                {{--@if ($key < 8)--}}
+                                    {{--<a href="javascript:;" class="company-room">{{ $room->room_name }}</a>--}}
+                                {{--@endif--}}
+                            {{--@endforeach--}}
+                            {{--<a href="{{ url('company/company-detail/'.$company->company_id) }}" class="more" >详细>></a>--}}
+                        {{--@endif--}}
                     </p>
                     <strong>备注：</strong>
-                    <p class="company-remark">{{ $company->company_remark }}</p>
+                    <p class="company-remark">{{ $company['company_remark'] }}</p>
                     <div class="func">
-                        <a href="{{ url('punish/create/'.$company->company_id) }}" class="btn btn-danger btn-xs">处罚</a>
-                        <a href="{{ url('company/change-rooms/'.$company->company_id) }}" class="btn btn-success btn-xs">调整房间</a>
-                        <a href="{{ url('company/edit/'.$company->company_id) }}" class="btn btn-warning btn-xs">修改</a>
-                        <a href="{{ url('company/quit/'.$company->company_id) }}" class="btn btn-danger btn-xs">退租</a>
+                        <a href="{{ url('punish/create/'.$company['company_id']) }}" class="btn btn-danger btn-xs">处罚</a>
+                        <a href="{{ url('company/change-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">调整房间</a>
+                        <a href="{{ url('company/edit/'.$company['company_id']) }}" class="btn btn-warning btn-xs">修改</a>
+                        <a href="{{ url('company/quit/'.$company['company_id']) }}" class="btn btn-danger btn-xs">退租</a>
                     </div>
                 </div>
             </div>
@@ -133,8 +135,8 @@
 
 @endsection
 @section('bottom')
-    <p>共有 {{ $count['company'] }} 个公司</p>
-    <p>共占用 {{ $count['livingRoom'] }} 个房间</p>
+    {{--<p>共有 {{ $count['company'] }} 个公司</p>--}}
+    {{--<p>共占用 {{ $count['livingRoom'] }} 个房间</p>--}}
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

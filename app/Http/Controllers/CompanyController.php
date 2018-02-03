@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Model\RoomType;
 use DB;
 use App\Model\Company;
 use App\Model\Room;
@@ -57,11 +58,66 @@ class CompanyController extends Controller
      */
     public function getIndex()
     {
-        $companies = Company::where('is_quit', 0)->paginate(config('cbs.pageNumber'));
-        $count = $this->companyCount();
+        $companiesCollection = Company::where('is_quit', 0)
+            ->get();
+        $companies = $this->companyRoomsCount($companiesCollection->toArray());
 
-        return view('company.index', ['companies'=>$companies, 'count'=>$count]);
+        return view('company.index', ['companies'=>$companies]);
     }
+
+
+    /**
+     * 获取各公司所用房间数量
+     * @param array $companies
+     * @return array
+     */
+    private function companyRoomsCount(array $companies)
+    {
+        $counts = $this->roomsCountByCompanyId();
+        foreach ($companies as $key => $company) {
+            $companies[$key]['count'] = '';
+            $id = $company['company_id'];
+            if (isset($counts[$id])) {
+                foreach ($counts[$id] as $typename => $count) {
+                    $companies[$key]['count'] .= $typename . '：'. $count . ' 套，';
+                }
+                $companies[$key]['count'] = trim($companies[$key]['count'], '，');
+            }
+        }
+        return $companies;
+    }
+
+    /**
+     * 格式：
+     * [
+     *  'company_id'=>[
+     *          '居住用房'=>27,
+     *          '餐厅'=>5,
+     *          '服务用房'=>3
+     *      ]
+     * ]
+     * @return array
+     */
+    private function roomsCountByCompanyId()
+    {
+        $rooms = Room::where('company_id', '<>', 0)
+            ->select('type_id','company_id')
+            ->get();
+        $types = RoomType::get();
+        $typesById = $types->keyBy('id')->toArray();
+        $result = [];
+        foreach ($rooms as $room){
+            $typeName = $typesById[$room->type_id]['type_name'];
+            if (isset($result[$room->company_id][$typeName])) {
+                $result[$room->company_id][$typeName]++;
+            } else {
+                $result[$room->company_id][$typeName] = 1;
+            }
+        }
+        return $result;
+    }
+
+
 
     private function companyCount($whereRaw = NULL)
     {
