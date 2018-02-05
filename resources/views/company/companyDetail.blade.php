@@ -4,7 +4,7 @@
 
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('/css/company/add.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('/css/company/detail.css') }}"/>
 
 @endsection
 @section('header')
@@ -71,13 +71,19 @@
                     <th width="10%">占用房间</th>
                     <td>
                         @foreach($company->detail as $typeId => $typeDetail)
-                            <p>
-                            <strong>{{$typeId}}:</strong>
-                            @foreach($typeDetail as $personNumber => $rooms)
-                                {{$personNumber}} 人间：{{$rooms}}
-
-                            @endforeach
-                            </p>
+                            <div class="detail">
+                                <p class="type-name">{{$types[$typeId]}} - <span style="color:red">{{$company->count[$typeId]}}</span> 人次:</p>
+                                @foreach($typeDetail as $personNumber => $rooms)
+                                    <div class="rooms">
+                                        <p class="person-number">
+                                            <span style="color:red">{{$personNumber}}</span> 人间：
+                                        </p>
+                                        <p class="room-detail">
+                                            {{$rooms}}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
                         @endforeach
                     </td>
                 </tr>

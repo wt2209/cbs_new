@@ -351,8 +351,7 @@ class CompanyController extends Controller
      */
     public function getCompanyDetail($companyId)
     {
-        $companyId = intval($companyId);
-        $company = Company::where('company_id', $companyId)
+        $company = Company::where('company_id', intval($companyId))
             ->where('is_quit', 0)
             ->first();
 
@@ -360,31 +359,23 @@ class CompanyController extends Controller
             return response('未找到此房间', 404);
         }
 
-//        [
-//            '人次'=>100,
-//            '居住房间'=>[
-//                '6人间'=>'10101 10102',
-//                '8人间'=>'10101 10102',
-//                '12人间'=>'10101 10102',
-//            ],
-//            '餐厅'=>
-//        ];
-
-
-
         $rooms = Room::where('company_id', $companyId)->get();
-
         $company->detail = $this->setRoomsDetail($rooms);
-
         $company->count = $this->setPeopleCount($rooms);
-//
-//        echo '<pre>';
-//        print_r($company->detail->toArray());
-//        exit;
-//
-        $types = RoomType::get();
+
+        $types = $this->typeIdToTypeName();
 
         return view('company.companyDetail', compact('company', 'types'));
+    }
+
+    private function typeIdToTypeName()
+    {
+        $types = RoomType::get();
+        $ret = [];
+        foreach ($types as $type) {
+            $ret[$type->id] = $type->type_name;
+        }
+        return $ret;
     }
 
     /**
@@ -397,7 +388,7 @@ class CompanyController extends Controller
         return $rooms->groupBy('type_id')->map(function($roomsByType, $typeId){
             $roomsByNumbers = $roomsByType->groupBy('person_number');
             return $roomsByNumbers->map(function($roomsByNumber, $personNumber) {
-                return $roomsByNumber->implode('room_name', ' ');
+                return $roomsByNumber->implode('room_name', '&nbsp;&nbsp;&nbsp;');
             });
         });
     }
