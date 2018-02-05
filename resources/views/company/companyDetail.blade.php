@@ -9,7 +9,7 @@
 @endsection
 @section('header')
     <ul class="nav nav-pills nav-small">
-        <li role="presentation" class="active"><a href="">{{ $companyDetail['name'] }} - 详情</a></li>
+        <li role="presentation" class="active"><a href="">{{ $company->company_name }} - 详情</a></li>
     </ul>
     <div id="return-btn">
         <a href="{{ url('company/index') }}"><< 返回列表页</a>
@@ -22,64 +22,63 @@
                 <tr class="no-border">
                     <th>公司名称</th>
                     <td>
-                        {{ $companyDetail['name'] }}
+                        {{ $company->company_name }}
                     </td>
                 </tr>
                 <tr>
                     <th>描述</th>
                     <td>
-                        {{ $companyDetail['description'] }}
+                        {{$company->company_description}}
                     </td>
                 </tr>
                 <tr>
                     <th>入住时间</th>
                     <td >
-                        {{ substr($companyDetail['created_at'], 0, 10) }}
+                        {{ substr($company->created_at, 0, 10) }}
                     </td>
                 </tr>
                 <tr>
                     <th>日常联系人</th>
                     <td>
-                        {{ $companyDetail['link'] }}
+                        {{ $company->link_man }}
                     </td>
                 </tr>
                 <tr>
                     <th>联系人电话</th>
                     <td>
-                        {{ $companyDetail['link_tel'] }}
+                        {{ $company->link_tel }}
                     </td>
                 </tr>
                 <tr>
                     <th>公司负责人</th>
                     <td>
-                        {{ $companyDetail['manager'] }}
+                        {{ $company->manager }}
                     </td>
                 </tr>
                 <tr>
                     <th>负责人电话</th>
                     <td>
-                        {{ $companyDetail['manager_tel'] }}
+                        {{ $company->manager_tel }}
                     </td>
                 </tr>
                 <tr>
                     <th>备注</th>
                     <td>
-                        {{ $companyDetail['remark'] }}
+                        {{ $company->remark }}
                     </td>
                 </tr>
                 <tr>
                     <th width="10%">占用房间</th>
                     <td>
-                            共占用 <span style="color:red">{{ $companyDetail['count']['livingRoomNumber'] }}</span> 个居住房间，
-                            共计 <span style="color:red">{{ $companyDetail['count']['livingPersonNumber'] }}</span> 人次，其中：<br>
-                            @foreach($companyDetail['livingRoom'] as $k => $v)
-                                &nbsp;&nbsp;&nbsp;&nbsp;{{ $k }}人间({{ $companyDetail['count'][$k] }}个)：
-                                <p style="padding-left: 35px;word-break:break-all;">{{$v}}</p>
+                        @foreach($company->detail as $typeId => $typeDetail)
+                            <p>
+                            <strong>{{$typeId}}:</strong>
+                            @foreach($typeDetail as $personNumber => $rooms)
+                                {{$personNumber}} 人间：{{$rooms}}
+
                             @endforeach
-                            共占用 <span style="color:red">{{ $companyDetail['count']['diningRoomNumber'] }}</span> 个餐厅：<br>
-                            <p style="padding-left: 30px;">{{ $companyDetail['diningRoom'] }}</p>
-                            共占用 <span style="color:red">{{ $companyDetail['count']['serviceRoomNumber'] }}</span> 个服务用房：<br>
-                            <p style="padding-left: 30px;">{{ $companyDetail['serviceRoom'] }}</span> </p>
+                            </p>
+                        @endforeach
                     </td>
                 </tr>
             </table>

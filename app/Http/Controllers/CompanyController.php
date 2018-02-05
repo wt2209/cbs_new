@@ -354,8 +354,7 @@ class CompanyController extends Controller
         $companyId = intval($companyId);
         $company = Company::where('company_id', $companyId)
             ->where('is_quit', 0)
-            ->first()
-            ->toArray();
+            ->first();
 
         if (!$company) {
             return response('未找到此房间', 404);
@@ -375,46 +374,44 @@ class CompanyController extends Controller
 
         $rooms = Room::where('company_id', $companyId)->get();
 
-        $rooms = $rooms->groupBy('type_id');
+        $company->detail = $this->setRoomsDetail($rooms);
 
-        echo '<pre>';
-        print_r($rooms->toArray());
-        exit;
+        $company->count = $this->setPeopleCount($rooms);
+//
+//        echo '<pre>';
+//        print_r($company->detail->toArray());
+//        exit;
+//
+        $types = RoomType::get();
 
+        return view('company.companyDetail', compact('company', 'types'));
+    }
 
+    /**
+     * 先按类型，再按人数组合出房间明细（groupBy）
+     * @param $rooms
+     * @return mixed
+     */
+    private function setRoomsDetail($rooms)
+    {
+        return $rooms->groupBy('type_id')->map(function($roomsByType, $typeId){
+            $roomsByNumbers = $roomsByType->groupBy('person_number');
+            return $roomsByNumbers->map(function($roomsByNumber, $personNumber) {
+                return $roomsByNumber->implode('room_name', ' ');
+            });
+        });
+    }
 
-
-        $allRentType = $rentType = DB::table('rent_type')->get();
-        foreach ($allRentType as $rentType) {
-            $rentTypeArr[$rentType->rent_type_id] = $rentType->person_number;
-        }
-        foreach ($rooms as $room) {
-            switch (intval($room->room_type)){
-                case 1:
-                    if (isset($rentTypeArr[$room->rent_type_id])) {
-                        $companyDetail['count']['livingPersonNumber'] += $rentTypeArr[$room->rent_type_id];
-                        $companyDetail['count']['livingRoomNumber'] += 1;
-                        // $rentType['rent_type_id'] = 'person_number';
-                        if (isset($companyDetail['livingRoom'][$rentTypeArr[$room->rent_type_id]])) {
-                            $companyDetail['count'][$rentTypeArr[$room->rent_type_id]]++;
-                            $companyDetail['livingRoom'][$rentTypeArr[$room->rent_type_id]] .= $room->room_name . '&nbsp;&nbsp;&nbsp;';
-                        } else {
-                            $companyDetail['count'][$rentTypeArr[$room->rent_type_id]] = 1;
-                            $companyDetail['livingRoom'][$rentTypeArr[$room->rent_type_id]] = $room->room_name . '&nbsp;&nbsp;&nbsp;';
-                        }
-                    }
-                    break;
-                case 2:
-                    $companyDetail['diningRoom'] .= $room->room_name . '&nbsp;&nbsp;&nbsp;';
-                    $companyDetail['count']['diningRoomNumber']++;
-                    break;
-                case 3:
-                    $companyDetail['serviceRoom'] .= $room->room_name . '&nbsp;&nbsp;&nbsp;';
-                    $companyDetail['count']['serviceRoomNumber']++;
-                    break;
-            }
-        }
-        return view('company.companyDetail', ['companyDetail'=>$companyDetail]);
+    /**
+     * 按类型组合出 房间人次
+     * @param $rooms
+     * @return mixed
+     */
+    private function setPeopleCount($rooms)
+    {
+        return $rooms->groupBy('type_id')->map(function($roomsByType, $typeId){
+            return $roomsByType->sum('person_number');
+        });
     }
 
     /**
