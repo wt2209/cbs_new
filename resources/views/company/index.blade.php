@@ -46,7 +46,7 @@
                 <h3>
                     {{ $company['company_name'] }}
                 </h3>
-                <span class="company-description">{{ $company['count'] }}</span>
+                <span class="company-description">{{ $company['company_description'] }}</span>
             </div>
             <div class="company-content">
                 <div class="l">
@@ -71,7 +71,6 @@
                 </div>
                 <div class="down">
                     <p><strong>入住时间：</strong><span>{{substr($company['created_at'], 0, 10)}}</span></p>
-                    <strong>房间数量：</strong>
                     {{--<p class="all-rooms">
                         @if (isset($rooms[$company->company_id]))
                             @if (count($rooms[$company->company_id]) <= 8)
@@ -86,9 +85,13 @@
                             @endif
                         @endif
                     </p>--}}
-                    <p class="all-rooms">
-                        {{$company['count']}}
-
+                    <div class="all-rooms">
+                        @if(count($company['count'])>0)
+                        @foreach($company['count'] as $type => $count)
+                                <p class="room-type">{{ $type }}：</p>
+                                <p class="count"><span style='color:red'>{{$count}}</span>套</p>
+                        @endforeach
+                        @endif
                         {{--@if ($company->rooms)--}}
                             {{--房间多于8个--}}
                             {{--@foreach($company->rooms as $key=>$room)--}}
@@ -98,10 +101,11 @@
                             {{--@endforeach--}}
                             {{--<a href="{{ url('company/company-detail/'.$company->company_id) }}" class="more" >详细>></a>--}}
                         {{--@endif--}}
-                    </p>
+                    </div>
                     <strong>备注：</strong>
                     <p class="company-remark">{{ $company['company_remark'] }}</p>
                     <div class="func">
+                        <a href="{{ url('company/company-detail/'.$company['company_id']) }}" class="btn btn-primary btn-xs">房间明细</a>
                         <a href="{{ url('punish/create/'.$company['company_id']) }}" class="btn btn-danger btn-xs">处罚</a>
                         <a href="{{ url('company/change-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">调整房间</a>
                         <a href="{{ url('company/edit/'.$company['company_id']) }}" class="btn btn-warning btn-xs">修改</a>

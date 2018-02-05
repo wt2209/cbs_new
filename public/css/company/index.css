@@ -161,7 +161,8 @@ table tr.no-border {
     position: relative;
     box-shadow: 0 0 2px 2px #ccc; }
     .company .company-content p {
-      line-height: 16px; }
+      line-height: 16px;
+    margin:0;}
     .company .company-content .l {
       float: left;
       width: 48%;
@@ -193,6 +194,16 @@ table tr.no-border {
         height: 50px;
         font-size: 11px; }
       .company .company-content .down .all-rooms {
-        height: 34px; }
+        height: 54px;
+      overflow: hidden;
+      margin:3px 0 3px 50px;}
+
+
+      .company .company-content .down .all-rooms p{
+        line-height: 18px;
+        margin:0;
+        float: left;
+        width:100px;
+      }
 
 /*# sourceMappingURL=index.css.map */

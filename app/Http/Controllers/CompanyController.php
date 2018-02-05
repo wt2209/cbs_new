@@ -75,15 +75,10 @@ class CompanyController extends Controller
     {
         $counts = $this->roomsCountByCompanyId();
         foreach ($companies as $key => $company) {
-            $companies[$key]['count'] = '';
             $id = $company['company_id'];
-            if (isset($counts[$id])) {
-                foreach ($counts[$id] as $typename => $count) {
-                    $companies[$key]['count'] .= $typename . '：'. $count . ' 套，';
-                }
-                $companies[$key]['count'] = trim($companies[$key]['count'], '，');
-            }
+            $companies[$key]['count'] = isset($counts[$id]) ? $counts[$id] : [];
         }
+
         return $companies;
     }
 
@@ -356,29 +351,39 @@ class CompanyController extends Controller
      */
     public function getCompanyDetail($companyId)
     {
-        $companyDetail = [];
         $companyId = intval($companyId);
         $company = Company::where('company_id', $companyId)
             ->where('is_quit', 0)
-            ->first();
+            ->first()
+            ->toArray();
 
-        $companyDetail['name'] = $company->company_name;
-        $companyDetail['description'] = $company->company_description;
-        $companyDetail['link'] = $company->linkman;
-        $companyDetail['link_tel'] = $company->linkman_tel;
-        $companyDetail['manager'] = $company->manager;
-        $companyDetail['manager_tel'] = $company->manager_tel;
-        $companyDetail['remark'] = $company->company_remark;
-        $companyDetail['created_at'] = $company->created_at;
-        $companyDetail['livingRoom'] = [];
-        $companyDetail['diningRoom'] = '';
-        $companyDetail['serviceRoom'] = '';
-        $companyDetail['count']['livingRoomNumber'] = 0;
-        $companyDetail['count']['livingPersonNumber'] = 0;
-        $companyDetail['count']['diningRoomNumber'] = 0;
-        $companyDetail['count']['serviceRoomNumber'] = 0;
+        if (!$company) {
+            return response('未找到此房间', 404);
+        }
+
+//        [
+//            '人次'=>100,
+//            '居住房间'=>[
+//                '6人间'=>'10101 10102',
+//                '8人间'=>'10101 10102',
+//                '12人间'=>'10101 10102',
+//            ],
+//            '餐厅'=>
+//        ];
+
+
 
         $rooms = Room::where('company_id', $companyId)->get();
+
+        $rooms = $rooms->groupBy('type_id');
+
+        echo '<pre>';
+        print_r($rooms->toArray());
+        exit;
+
+
+
+
         $allRentType = $rentType = DB::table('rent_type')->get();
         foreach ($allRentType as $rentType) {
             $rentTypeArr[$rentType->rent_type_id] = $rentType->person_number;
