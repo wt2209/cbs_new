@@ -284,6 +284,9 @@ class CompanyController extends Controller
      */
     public function postStoreSelectedRooms(Request $request)
     {
+        print_r($request->rooms);die;
+
+
         //$roomDetails格式 : 1_2|2_1|3_1 ('room_id'_'gender')
         $this->newRooms = explode('|', htmlspecialchars(strip_tags($request->roomDetails)));
         $companyId = intval($request->company_id);

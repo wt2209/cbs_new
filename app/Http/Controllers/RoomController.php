@@ -30,26 +30,27 @@ class RoomController extends Controller
             ->select('room_id', 'type_id', 'room_name', 'person_number', 'gender')
             ->get();
 
+        $roomsGroupByType = $rooms->groupBy(function ($room, $key) {
+            return $room->type_id;
+        })->toArray();
+
+        $typeIdToTypeName = $this->typeIdToTypeName();
         $return = [];
-        foreach ($rooms as $room) {
-            $tmp = [
-                'room_id'=>$room->room_id,
-                'room_name'=>$room->room_name,
-                'person_number'=>$room->person_number
-            ];
-            switch ($room['type_id']) {
-                case '1':
-                    $return['living'][] = $tmp;
-                    break;
-                case '2':
-                    $return['dining'][] = $tmp;
-                    break;
-                case '3':
-                    $return['service'][] = $tmp;
-                    break;
-            }
+        foreach ($roomsGroupByType as $typeId => $r) {
+            $return[$typeIdToTypeName[$typeId]] = $r;
         }
+
         return response()->json($return);
+    }
+
+    private function typeIdToTypeName()
+    {
+        $types = RoomType::get();
+        $ret = [];
+        foreach ($types as $type) {
+            $ret[$type->id] = $type->type_name;
+        }
+        return $ret;
     }
 
     /**

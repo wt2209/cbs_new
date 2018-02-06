@@ -5,6 +5,12 @@
 
 @section('css')
     <link rel="stylesheet" href="{{ asset('/css/company/add.css') }}"/>
+    <style>
+        .data-column{
+            width:400px;
+            border-right: 1px #ddd solid;
+        }
+    </style>
 
 @endsection
 @section('header')
@@ -31,17 +37,7 @@
             <input type="hidden" name="company_id" value="{{ $company_id }}">
         </form>
         <table class="table table-hover table-condensed">
-            <tr>
-                <td width="30%" style="border-right: 1px #ddd solid" id="living">
-                    居住用房：<br>
-                </td>
-                <td width="25%" style="border-right: 1px #ddd solid " id="dining">
-                    餐厅用房：<br>
-                </td>
-                <td  id="service">
-                    服务用房：<br>
-                </td>
-            </tr>
+            <tr id="row"></tr>
         </table>
     </div>
 @endsection
@@ -54,84 +50,58 @@
     <script src="{{ asset('/js/functions.js') }}"></script>
     <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
     <script>
-        var sRoomId = '';
-        var sRoomType = '';
         var bStatus = false;
         $(function(){
             maskShow();
             $.get('{{ url('room/empty-rooms-group-by-type') }}', '', function(data){
-                var livingStr = '居住用房：<br>';
-                var diningStr = '餐厅用房：<br>';
-                var serviceStr = '服务用房：<br>';
-                if (data['living']) {
-                    for (var i in data['living']) {
-                        var current = data['living'][i]
-                        livingStr += '<div class="col-lg-2"  style="width:300px;">';
-                        livingStr += '<div class="input-group">';
-                        livingStr += '<label class="input-group-addon">';
-                        livingStr += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                        livingStr += '</label>';
-                        livingStr += '<span class="input-group-addon">';
-                        livingStr += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
-                        livingStr += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
-                        livingStr += '</span>';
-                        livingStr += '<span class="input-group-addon">'+current['person_number']+'人间</span>';
-                        livingStr += '</div>';
-                        livingStr += '</div>';
-                    }
-                    $('#living').html(livingStr);
-                }
-                if (data['dining']) {
-                    for (var i in data['dining']) {
-                        var current = data['dining'][i];
-                        diningStr+='<label class="no-bold">';
-                        diningStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                        diningStr+='</label><br>';
-                    }
-                    $('#dining').html(diningStr);
-                }
+                var row = document.getElementById('row');
+                for (var type in data) {
+                    var rooms = data[type];
+                    var column = document.createElement('td');
+                    column.className = 'data-column'
+                    var str = type + ':<br>';
+                    str += '<div class="col-lg-2" >';
+                    for (var i in rooms) {
+                        var current = rooms[i];
 
-                if (data['service']) {
-                    for (var i in data['service']) {
-                        var current = data['service'][i];
-                        serviceStr+='<label class="no-bold">';
-                        serviceStr+='<input type="checkbox" value="'+current['room_id']+'">&nbsp;'+current['room_name'];
-                        serviceStr+='</label><br>';
+                        str += '<div class="input-group">';
+                        str += '<label class="input-group-addon">';
+                        str += '<input type="checkbox"  value="'+current['room_id']+'">&nbsp;'+current['room_name'];
+                        str += '</label>';
+                        str += '<span class="input-group-addon">';
+                        str += '<label class="no-bold"><input type="radio" value="1" checked name="gender['+current['room_id']+']">男</label>&nbsp;';
+                        str += '<label class="no-bold"><input type="radio" value="2" name="gender['+current['room_id']+']">女</label>';
+                        str += '</span>';
+                        str += '<span class="input-group-addon">'+current['person_number']+'人间</span>';
+                        str += '</div>';
                     }
-                    $('#service').html(serviceStr);
+                    str += '</div>';
+                    column.innerHTML = str;
+                    row.appendChild(column);
                 }
+                //为了使td宽度自适应
+                row.appendChild(document.createElement('td'));
                 maskHide()
             }, 'json')
 
             $('#submit').click(function(){
-                sRoomDetail = '';
-                $('#living').find('input[type=checkbox]').each(function(){
+                var rooms = '';
+                $('#row').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
                         var iRoomId = $(this).val();
-                        var iGender;
+                        var iGender = 1;
                         $(this).parents('.input-group').find('input[type=radio]').each(function(){
                             if ($(this).prop('checked')) {
                                 iGender = $(this).val();
                             }
                         });
                         //格式为：1_1 , 'room_id'_'gender',
-                        sRoomDetail += iRoomId+'_'+iGender+'|';
-                    }
-                })
-                $('#dining').find('input[type=checkbox]').each(function(){
-                    if ($(this).prop('checked')) {
-                        //格式为：1_1 , 'room_id'_'gender', 后两位数字是几无所谓，只求统一格式
-                        sRoomDetail += $(this).val() + '_1|';
-                    }
-                })
-                $('#service').find('input[type=checkbox]').each(function(){
-                    if ($(this).prop('checked')) {
-                        sRoomDetail += $(this).val() + '_1|';
+                        rooms += iRoomId+'_'+iGender+'|';
                     }
                 })
 
-                sRoomDetail = sRoomDetail.substring(0, sRoomDetail.length - 1);
-                var postStr = 'newCompany=1&roomDetails='+sRoomDetail;
+                rooms = rooms.substring(0, rooms.length - 1);
+                var postStr = 'newCompany=1&rooms='+rooms;
                 if (bStatus) {
                     return false;
                 }
