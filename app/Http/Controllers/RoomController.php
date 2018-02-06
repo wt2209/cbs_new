@@ -24,9 +24,12 @@ class RoomController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     //TODO 还未修改
-    public function getAllEmptyRoom()
+    public function getEmptyRoomsGroupByType()
     {
-        $rooms = Room::where('company_id', 0)->get();
+        $rooms = Room::where('company_id', 0)
+            ->select('room_id', 'type_id', 'room_name', 'person_number', 'gender')
+            ->get();
+
         $return = [];
         foreach ($rooms as $room) {
             $tmp = [
@@ -34,7 +37,7 @@ class RoomController extends Controller
                 'room_name'=>$room->room_name,
                 'person_number'=>$room->person_number
             ];
-            switch ($room['room_type']) {
+            switch ($room['type_id']) {
                 case '1':
                     $return['living'][] = $tmp;
                     break;

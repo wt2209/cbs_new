@@ -65,9 +65,9 @@
 @section('content')
     @foreach($roomsWithFloor as $key => $building)
         <div class="building">
-            @foreach($building as $floors)
+            @foreach($building as $floor)
                 <div class="floor">
-                    @foreach($floors as $room)
+                    @foreach($floor as $room)
                         <div class="room">
                             <div class="title">
                                 <h3>

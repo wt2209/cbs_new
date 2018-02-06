@@ -59,7 +59,7 @@
         var bStatus = false;
         $(function(){
             maskShow();
-            $.get('{{ url('room/all-empty-room') }}', '', function(data){
+            $.get('{{ url('room/empty-rooms-group-by-type') }}', '', function(data){
                 var livingStr = '居住用房：<br>';
                 var diningStr = '餐厅用房：<br>';
                 var serviceStr = '服务用房：<br>';
@@ -108,7 +108,6 @@
                 $('#living').find('input[type=checkbox]').each(function(){
                     if ($(this).prop('checked')) {
                         var iRoomId = $(this).val();
-                        var iType = $(this).parents('.input-group').find('select').val();
                         var iGender;
                         $(this).parents('.input-group').find('input[type=radio]').each(function(){
                             if ($(this).prop('checked')) {
