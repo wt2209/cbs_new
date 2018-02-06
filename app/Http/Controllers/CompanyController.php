@@ -17,19 +17,6 @@ use App\Http\Controllers\ExcelController;
 class CompanyController extends Controller
 {
     /**
-     * 当前操作的公司id。用于记录日志
-     * @var
-     */
-    private $companyId;
-
-    /**
-     * 当前操作的类型。用于记录日志
-     * 1|入住 2|调整房间 3|退房 4|删除
-     * @var
-     */
-    private $type;
-
-    /**
      * 原房间。用于日志记录
      * @var array
      */
@@ -46,7 +33,6 @@ class CompanyController extends Controller
      */
     public function __construct()
     {
-        //dd(Route::current()->getActionName());
         $this->middleware('my.auth');
         //使用中间件过滤字段
         $this->middleware('fieldFilter', ['only'=>['postStore']]);

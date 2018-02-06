@@ -85,11 +85,19 @@ class RoomController extends Controller
      */
     private function roomsGroupByFloor($rooms)
     {
-        return $rooms->groupBy(function ($room, $key) {
-            if(intval($room['room_name']) > 0 && strlen($room['room_name'])) {
-                return substr($room['room_name'], 1, 2);
-            }
-            return 'whatever';
+        // 按楼号 分组
+        $roomsGroupByBuilding =  $rooms->groupBy(function ($room, $key) {
+            return $room->building;
+        });
+
+        // 按楼层 分组
+        return $roomsGroupByBuilding->map(function($building, $key) {
+            return $building->groupBy(function($room, $k) {
+                if(intval($room->room_name) > 0 && strlen($room->room_name) == 5) {
+                    return substr($room->room_name, 1, 2);
+                }
+                return 'whatever';
+            });
         });
     }
 
@@ -136,6 +144,7 @@ class RoomController extends Controller
 
         $structure = $this->getRoomStructure();
         $roomsWithFloor = $this->roomsGroupByFloor($rooms);
+
         return view('room.index',  compact('structure', 'roomsWithFloor', 'count'));
     }
 

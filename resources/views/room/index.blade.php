@@ -63,28 +63,24 @@
     </div>
 @endsection
 @section('content')
-
-    @foreach($roomsWithFloor as $key => $rooms)
-        <div class="floor">
-            @foreach($rooms as $room)
-                <div class="room">
-                    <div class="title">
-                        <h3>
-                            {{$room->room_name}}
-                        </h3>
-                    </div>
-                    <div class="room-content">
-                        <div class="company">
-                            {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
+    @foreach($roomsWithFloor as $key => $building)
+        <div class="building">
+            @foreach($building as $floors)
+                <div class="floor">
+                    @foreach($floors as $room)
+                        <div class="room">
+                            <div class="title">
+                                <h3>
+                                    {{$room->room_name}}
+                                </h3>
+                            </div>
+                            <div class="room-content">
+                                <div class="company">
+                                    {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
+                                </div>
+                            </div>
                         </div>
-                        {{--<strong>备注：</strong>--}}
-                        {{--<p class="company-remark">{{ $room->room_remark }}</p>--}}
-                        {{--<div class="func">--}}
-                            {{--<a href="{{ url('company/change-rooms/'.$company->company_id) }}" class="btn btn-success btn-xs">调整房间</a>--}}
-                            {{--<a href="{{ url('company/edit/'.$company->company_id) }}" class="btn btn-warning btn-xs">修改</a>--}}
-                            {{--<a href="{{ url('company/quit/'.$company->company_id) }}" class="btn btn-danger btn-xs">退租</a>--}}
-                        {{--</div>--}}
-                    </div>
+                    @endforeach
                 </div>
             @endforeach
         </div>
