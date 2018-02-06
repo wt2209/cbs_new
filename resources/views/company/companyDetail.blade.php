@@ -72,11 +72,12 @@
                     <td>
                         @foreach($company->detail as $typeId => $typeDetail)
                             <div class="detail">
-                                <p class="type-name">{{$types[$typeId]}} - <span style="color:red">{{$company->count[$typeId]}}</span> 人次:</p>
+                                <p class="type-name">{{$types[$typeId]}}</p>
                                 @foreach($typeDetail as $personNumber => $rooms)
                                     <div class="rooms">
                                         <p class="person-number">
-                                            <span style="color:red">{{$personNumber}}</span> 人间：
+                                            <span style="color:red">{{$personNumber}}</span> 人间 -
+                                            <span style="color:red">{{$company->count[$typeId][$personNumber]}}</span>套：
                                         </p>
                                         <p class="room-detail">
                                             {{$rooms}}

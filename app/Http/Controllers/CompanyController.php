@@ -61,8 +61,9 @@ class CompanyController extends Controller
         $companiesCollection = Company::where('is_quit', 0)
             ->get();
         $companies = $this->companyRoomsCount($companiesCollection->toArray());
+        $counts = $this->companyCount($companies);
 
-        return view('company.index', ['companies'=>$companies]);
+        return view('company.index', compact('companies', 'counts'));
     }
 
 
@@ -113,38 +114,27 @@ class CompanyController extends Controller
     }
 
 
-
-    private function companyCount($whereRaw = NULL)
+    /**
+     * 计算共有多少个公司，占用多少房间
+     * @param array $companies
+     * @return array
+     */
+    private function companyCount(array $companies)
     {
-        $whereArr[] = 'is_quit=0';
-        if ($whereRaw) {
-            $whereArr[] = $whereRaw;
-        }
-        $companies = Company::whereRaw(implode(' and ', $whereArr))->get();
-        $count = [];
-        $count['company'] = count($companies);
-        $count['livingRoom'] = $count['diningRoom'] = $count['serviceRoom'] = 0;
-        $companyIdArray = [];
+        $count = ['total'=>count($companies)];
         foreach ($companies as $company) {
-            $companyIdArray[] = $company->company_id;
-        }
-        $rooms = Room::whereIn('company_id', $companyIdArray)->get();
-        foreach ($rooms as $room) {
-            switch ($room->room_type) {
-                case '1':
-                    //计算居住房间个数
-                    $count['livingRoomNumber'][$room->company_id] = isset($count['livingRoomNumber'][$room->company_id]) ?
-                        $count['livingRoomNumber'][$room->company_id] +1 :
-                        1;
-                    $count['livingRoom']++;
-                    break;
-                case '2':
-                    $count['diningRoom']++;
-                    break;
-                case '3':
-                    $count['serviceRoom']++;
-                    break;
+            if (empty($company['count'])) {
+                continue;
             }
+
+            foreach ($company['count'] as $typename => $c) {
+                if (isset($count[$typename])) {
+                    $count['rooms'][$typename] = $count['rooms'][$typename] + $c;
+                } else {
+                    $count['rooms'][$typename] = $c;
+                }
+            }
+
         }
         return $count;
     }
@@ -363,6 +353,7 @@ class CompanyController extends Controller
         $company->detail = $this->setRoomsDetail($rooms);
         $company->count = $this->setPeopleCount($rooms);
 
+
         $types = $this->typeIdToTypeName();
 
         return view('company.companyDetail', compact('company', 'types'));
@@ -401,7 +392,13 @@ class CompanyController extends Controller
     private function setPeopleCount($rooms)
     {
         return $rooms->groupBy('type_id')->map(function($roomsByType, $typeId){
-            return $roomsByType->sum('person_number');
+            $roomsByNumbers = $roomsByType->groupBy('person_number');
+            return $roomsByNumbers->map(function($roomsByNumber, $personNumber) {
+                return $roomsByNumber->count();
+            });
+
+
+//            return $roomsByType->sum('person_number');
         });
     }
 

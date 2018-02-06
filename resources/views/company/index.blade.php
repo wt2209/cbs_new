@@ -139,8 +139,13 @@
 
 @endsection
 @section('bottom')
+    <p>共计 {{ $counts['total'] }} 个公司</p>
+    <p>共占用：
+        @foreach($counts['rooms'] as $typename=>$count)
+            {{$typename}} :  {{$count}}个&nbsp;&nbsp;
+        @endforeach
+    </p>
     {{--<p>共有 {{ $count['company'] }} 个公司</p>--}}
-    {{--<p>共占用 {{ $count['livingRoom'] }} 个房间</p>--}}
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
