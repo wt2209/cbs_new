@@ -49,6 +49,7 @@ class CompanyController extends Controller
         $companies = $this->companyRoomsCount($companiesCollection->toArray());
         $counts = $this->companyCount($companies);
 
+
         return view('company.index', compact('companies', 'counts'));
     }
 
@@ -258,7 +259,7 @@ class CompanyController extends Controller
                 //错误，回滚事务
                 DB::rollBack();
                 //TODO  好好研究一下response  重构一下302 等问题
-                return response()->json(['message'=>'失败：请重试！', 'status'=>0]);;
+                return response()->json(['message'=>'失败：请重试！', 'status'=>0]);
             }
         }
 

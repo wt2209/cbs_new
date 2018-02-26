@@ -72,11 +72,21 @@
                             <div class="title">
                                 <h3>
                                     {{$room->room_name}}
+                                    <span style="font-weight: normal;font-size: 12px;">
+                                        ({{$room->person_number}}人间)
+                                    </span>
                                 </h3>
                             </div>
                             <div class="room-content">
                                 <div class="company">
-                                    {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
+                                    @if (isset($room->company->company_name)) 
+                                        {{ $room->company->company_name }}
+                                    @else
+
+                                    @endif
+                                </div>
+                                <div class="func">
+                                    <button type="button" class="btn btn-danger btn-xs enter-button">退租</button>
                                 </div>
                             </div>
                         </div>
@@ -107,6 +117,82 @@
             </div>
         </div>
     </div>
+
+    <!-- enter modal -->
+    <div id="enter-modal" class="modal fade bs-example-modal-sm">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">公司入住</h4>
+                </div>
+                <form id="enter-form">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <table class="table">
+                                <tr>
+                                    <th>公司名称</th>
+                                    <td>
+                                        <select name="company_id" class="form-control">
+                                            <option value="1">公司1</option>
+                                            <option value="2">公司2</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>电表底数</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="enter_electric_base">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>水表底数</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="enter_water_base">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>性别</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="gender">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="enter-confirm" _url="{{url('record/store')}}" type="button" class="btn btn-primary">确认</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- quit modal -->
+    <div id="quit-modal" class="modal fade bs-example-modal-sm">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">删除确认</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        确认要删除吗？
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
 @endsection
 @section('bottom')
     <p><br>当前共有 {{ $count['total'] }} 套房间。其中，占用 <span style="color:red">{{ $count['used'] }}</span> 套，空房 <span style="color:red">{{ $count['empty'] }}</span> 套。</p>
@@ -117,6 +203,25 @@
     <script>
         //删除模态框
         ajaxDelete('{{ url('room/remove/') }}');
+                        
+        var roomId = 0;
+        $('.enter-button').click(function(){
+            $('#enter-modal').modal('show');
+            roomId = $(this).attr('room_id');
+        });
+        $('#enter-confirm').click(function(){
+            var url = $(this).attr('_url')
+            $('#enter-modal').modal('hide');
+            maskShow();
+            $.post(url, $('#enter-form').serialize(), function(e){
+                maskHide();
+                if (e.status) {
+                    location.reload(true);
+                }
+                popdown({'message':e.message, 'status': e.status});
+            }, 'json');
+        })
+
 
     </script>
 @endsection

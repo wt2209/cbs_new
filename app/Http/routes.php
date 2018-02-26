@@ -34,8 +34,13 @@ Route::controller('room', 'RoomController');
 //承包商公司管理
 Route::controller('company', 'CompanyController');
 
+
+//record
+Route::controller('record', 'RecordController');
+
+
 //承包商公司房间变动记录
-Route::controller('company-log', 'CompanyLogController');
+// Route::controller('company-log', 'CompanyLogController');
 
 //水电费处理
 Route::controller('utility','UtilityController');

@@ -141,9 +141,11 @@
 @section('bottom')
     <p>共计 {{ $counts['total'] }} 个公司</p>
     <p>共占用：
-        @foreach($counts['rooms'] as $typename=>$count)
-            {{$typename}} :  {{$count}}个&nbsp;&nbsp;
-        @endforeach
+        @if (isset($counts['rooms']))
+            @foreach($counts['rooms'] as $typename=>$count)
+                {{$typename}} :  {{$count}}个&nbsp;&nbsp;
+            @endforeach
+        @endif
     </p>
     {{--<p>共有 {{ $count['company'] }} 个公司</p>--}}
 @endsection

@@ -16,6 +16,7 @@ class CreateRecordsTable extends Migration
             $table->increments('id');
             $table->integer('company_id');
             $table->integer('room_id');
+            $table->tinyInteger('gender', false, true)->default(1);//性别 1|男， 2|女 默认男
             $table->timestamp('entered_at')->comment('入住时间');
             $table->timestamp('quit_at')->default('3000-01-01 00:00:00')->comment('退房时间');
             $table->integer('enter_electric_base')->default(0)->comment('入住时电表底数');

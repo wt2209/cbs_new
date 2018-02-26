@@ -22,7 +22,6 @@ class CreateRoomsTable extends Migration
             $table->tinyInteger('type_id', false, true)->default(1);
             //房间人数  房间人数决定了收费标准
             $table->tinyInteger('person_number')->default(8)->comment('房间人数');
-            $table->tinyInteger('gender', false, true)->default(1);//性别 1|男， 2|女 默认男
             $table->decimal('price')->comment('每月房费单价');
             $table->string('room_remark');
             $table->timestamps();
