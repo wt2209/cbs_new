@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Model\Record;
 use App\Model\Room;
+use App\Model\Company;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -23,9 +24,11 @@ class RecordController extends Controller
      */
     public function getIndex()
     {
-        $records = Record::get();
+        $records = Record::with('company')->with('room')->get();
 
-        return view('record.index', compact('records'));
+        $companies = Company::get();
+
+        return view('record.index', compact('records', 'companies'));
     }
 
     /**
