@@ -108,7 +108,7 @@ class CompanyController extends Controller
      */
     private function companyCount(array $companies)
     {
-        $count = ['total'=>count($companies)];
+        $count = ['total' => count($companies)];
         foreach ($companies as $company) {
             if (empty($company['count'])) {
                 continue;
@@ -500,6 +500,8 @@ class CompanyController extends Controller
         // TODO 所有房间都要退房
         $company = Company::find(intval($id));
         $company->is_quit = 1;
+
+        exit('所有房间还未退房！！！');
         $company->save();
         return response()->json(['message'=>'操作成功！', 'status'=>1]);
     }

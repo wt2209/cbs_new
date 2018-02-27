@@ -79,14 +79,14 @@
                             </div>
                             <div class="room-content">
                                 <div class="company">
-                                    @if (isset($room->company->company_name)) 
-                                        {{ $room->company->company_name }}
-                                    @else
-
-                                    @endif
+                                    {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
                                 </div>
                                 <div class="func">
-                                    <button type="button" class="btn btn-danger btn-xs enter-button">退租</button>
+                                    @if (isset($room->company->company_name))
+                                        <button type="button" class="btn btn-danger btn-xs quit-button" company_id="{{$room->company_id}}" room_id="{{$room->room_id}}">退房</button>
+                                    @else
+                                        <button type="button" class="btn btn-success btn-xs enter-button" room_id="{{$room->room_id}}">入住</button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -120,11 +120,11 @@
 
     <!-- enter modal -->
     <div id="enter-modal" class="modal fade bs-example-modal-sm">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="gridSystemModalLabel">公司入住</h4>
+                    <h4 class="modal-title" id="gridSystemModalLabel">房间入住</h4>
                 </div>
                 <form id="enter-form">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -135,8 +135,10 @@
                                     <th>公司名称</th>
                                     <td>
                                         <select name="company_id" class="form-control">
-                                            <option value="1">公司1</option>
-                                            <option value="2">公司2</option>
+                                            <option value="0">选择公司</option>
+                                            @foreach($companies as $company)
+                                                <option value="{{ $company->company_id }}">{{ $company->company_name }}</option>
+                                            @endforeach
                                         </select>
                                     </td>
                                 </tr>
@@ -155,14 +157,21 @@
                                 <tr>
                                     <th>性别</th>
                                     <td>
-                                        <input type="text" class="form-control" name="gender">
+                                        <label><input type="radio" name="gender" value="1" checked>男</label>&nbsp;&nbsp;&nbsp;
+                                        <label><input type="radio" name="gender" value="2">女</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>日期</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="entered_at" placeholder="格式：2018-2-26，不填则以当前时间为准">
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="enter-confirm" _url="{{url('record/store')}}" type="button" class="btn btn-primary">确认</button>
+                        <button id="enter-confirm" _url="{{url('record/create')}}" type="button" class="btn btn-primary">确认</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                     </div>
                 </form>
@@ -172,21 +181,43 @@
 
     <!-- quit modal -->
     <div id="quit-modal" class="modal fade bs-example-modal-sm">
-        <div class="modal-dialog modal-sm">
+        <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="gridSystemModalLabel">删除确认</h4>
+                    <h4 class="modal-title" id="gridSystemModalLabel">房间退房</h4>
                 </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        确认要删除吗？
+                <form id="quit-form">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <table class="table">
+                                <tr>
+                                    <th>电表底数</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="quit_electric_base">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>水表底数</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="quit_water_base">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>日期</th>
+                                    <td>
+                                        <input type="text" class="form-control" name="quit_at" placeholder="格式：2018-2-26，不填则以当前时间为准">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                </div>
+                    <div class="modal-footer">
+                        <button id="quit-confirm" _url="{{url('record/complete')}}" type="button" class="btn btn-primary">确认</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -205,15 +236,19 @@
         ajaxDelete('{{ url('room/remove/') }}');
                         
         var roomId = 0;
+        var companyId = 0;
         $('.enter-button').click(function(){
+            $('#enter-form')[0].reset();
             $('#enter-modal').modal('show');
             roomId = $(this).attr('room_id');
         });
         $('#enter-confirm').click(function(){
             var url = $(this).attr('_url')
+            var params = $('#enter-form').serialize() + "&room_id=" + roomId;
+
             $('#enter-modal').modal('hide');
             maskShow();
-            $.post(url, $('#enter-form').serialize(), function(e){
+            $.post(url, params, function(e){
                 maskHide();
                 if (e.status) {
                     location.reload(true);
@@ -222,6 +257,27 @@
             }, 'json');
         })
 
+
+        $('.quit-button').click(function(){
+            $('#quit-form')[0].reset();
+            $('#quit-modal').modal('show');
+            roomId = $(this).attr('room_id');
+            companyId = $(this).attr('company_id');
+        });
+        $('#quit-confirm').click(function(){
+            var url = $(this).attr('_url')
+            var params = $('#quit-form').serialize() + "&room_id=" + roomId + "&company_id=" + companyId;
+
+            $('#quit-modal').modal('hide');
+            maskShow();
+            $.post(url, params, function(e){
+                maskHide();
+                if (e.status) {
+                    location.reload(true);
+                }
+                popdown({'message':e.message, 'status': e.status});
+            }, 'json');
+        })
 
     </script>
 @endsection

@@ -8,6 +8,7 @@ use DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Model\Room;
+use App\Model\Company;
 use Illuminate\Support\Facades\Validator;
 
 class RoomController extends Controller
@@ -79,7 +80,8 @@ class RoomController extends Controller
 
         $roomsWithFloor = $this->roomsGroupByFloor($rooms);
 
-        return view('room.index', compact('structure', 'roomsWithFloor', 'currentBuilding', 'currentType', 'count'));
+        $companies = Company::select('company_id', 'company_name')->get();
+        return view('room.index', compact('structure', 'roomsWithFloor', 'currentBuilding', 'currentType', 'count', 'companies'));
     }
 
     /**

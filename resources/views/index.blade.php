@@ -62,7 +62,7 @@
                             <a href="{{ url('company/add') }}" target="iframe">新公司入住</a>
                         </li>
                         <li>
-                            <a href="{{ url('company-log/index') }}" target="iframe">公司变动记录</a>
+                            <a href="{{ url('record/index') }}" target="iframe">房间使用记录</a>
                         </li>
                     </ul>
                 </div>

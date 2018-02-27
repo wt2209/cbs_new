@@ -17,12 +17,11 @@ class RoomTableSeeder extends Seeder
                 for ($j = 1; $j <= $top; $j++) {
                     for ($m = 1; $m <= 17; $m++) {
                         DB::table('room')->insert([
-                            'company_id'=> 1,
+                            'company_id'=> 0,
                             'building'=>$i,
                             'type_id'=> 1,
                             'room_name'=> $i*10000+$j*100+$m,
                             'person_number'=>8,
-                            'gender'=>random_int(1,2),
                             'price'=>768,
                             'room_remark'=> '房间备注'.str_random(10),
                             'created_at'=>date('Y-m-d H:i:s'),
@@ -33,7 +32,7 @@ class RoomTableSeeder extends Seeder
             }
             for ($i = 1; $i <= 9; $i++) {
                 DB::table('room')->insert([
-                    'company_id'=> 1,
+                    'company_id'=> 0,
                     'building'=>'综合楼',
                     'type_id'=> 2,
                     'room_name'=> '餐厅'.$i,
@@ -45,7 +44,7 @@ class RoomTableSeeder extends Seeder
             }
             for ($i = 1; $i <= 5; $i++) {
                 DB::table('room')->insert([
-                    'company_id'=> 1,
+                    'company_id'=> 0,
                     'building'=>'综合楼',
                     'type_id'=> 3,
                     'room_name'=> '办公'.$i,
@@ -55,6 +54,11 @@ class RoomTableSeeder extends Seeder
                     'updated_at'=>date('Y-m-d H:i:s'),
                 ]);
             }
+
+
+            //公司占用
+            DB::table('room')->where('room_id', '<', 400)->update(['company_id'=>1]);
+
         } else {
             for ($i = 1; $i <= 4; $i++) {
                 $top = $i < 3 ? 18 : 16;
@@ -66,7 +70,6 @@ class RoomTableSeeder extends Seeder
                             'type_id'=> 1,
                             'room_name'=> $i*10000+$j*100+$m,
                             'person_number'=>8,
-                            'gender'=>1,
                             'price'=>768,
                             'room_remark'=> '',
                             'created_at'=>date('Y-m-d H:i:s'),
