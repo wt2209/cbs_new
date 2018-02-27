@@ -208,8 +208,13 @@ class RoomController extends Controller
     {
         $roomId = intval($request->room_id);
         $roomRemark = $request->input('room_remark');
+        $data = [
+            'room_remark'=>$request->room_remark,
+            'price'=>$request->price,
+            'person_number'=>$request->person_number,
+        ];
 
-        $status = DB::table('room')->where('room_id', $roomId)->update(['room_remark'=>$roomRemark]);
+        $status = Room::where('room_id', $roomId)->update($data);
         if ($status) {
             return response()->json(['message'=>'操作成功！', 'status'=>1]);
         }

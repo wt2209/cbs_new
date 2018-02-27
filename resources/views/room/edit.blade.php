@@ -12,7 +12,7 @@
         <li role="presentation" class="active"><a href="">修改房间备注</a></li>
     </ul>
     <div id="return-btn">
-        <a href="{{ url('room/living-room') }}"><< 返回列表页</a>
+        <a href="{{ url('room/index') }}"><< 返回列表页</a>
         <a href="" class="refresh"></a>
     </div>
 @endsection
@@ -33,7 +33,7 @@
                 <tr class="no-border">
                     <th width="10%">房间人数</th>
                     <td width="20%">
-                        <input type="text" class="form-control" value="{{ $room->person_number }}">
+                        <input type="text" class="form-control" name="person_number" value="{{ $room->person_number }}">
                     </td>
                     <td width="10%"></td>
                     <td></td>
@@ -41,7 +41,7 @@
                 <tr class="no-border">
                     <th width="10%">月租金</th>
                     <td width="20%">
-                        <input type="text" class="form-control" value="{{ $room->price }}">
+                        <input type="text" class="form-control" name="price" value="{{ $room->price }}">
                     </td>
                     <td width="10%"></td>
                     <td></td>
