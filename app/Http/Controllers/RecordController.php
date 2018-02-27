@@ -24,7 +24,29 @@ class RecordController extends Controller
      */
     public function getIndex()
     {
-        $records = Record::with('company')->with('room')->get();
+        $records = Record::with('company')->with('room')->paginate(config('cbs.pageNumber'));;
+
+        $companies = Company::get();
+
+        return view('record.index', compact('records', 'companies'));
+    }
+
+    public function getSearch(Request $request)
+    {
+        $companyId = $request->company_id;
+        $inUse = $request->in_use;
+
+        if ($companyId == 0) {
+            $model = Record::where('company_id', '>', 0);
+        } else {
+            $model = Record::where('company_id', $companyId);
+        }
+        
+        if ($inUse == 1 || $inUse == 0) {
+            $model->where('in_use', $inUse);
+        }
+
+        $records = $model->paginate(config('cbs.pageNumber'));;
 
         $companies = Company::get();
 

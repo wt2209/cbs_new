@@ -14,21 +14,24 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <form class="navbar-form navbar-left" role="search" method="get" action="{{ url('utility/base-search') }}">
+                <form class="navbar-form navbar-left" role="search" method="get" action="{{ url('record/search') }}">
                     <div class="form-group">
                         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-
                         <select name="company_id" class="form-control">
                             <option value="0">--选择公司--</option>
                             @foreach($companies as $company)
-                                <option value="{{$company->company_id}}">{{$company->company_name}}</option>
+                                <option value="{{$company->company_id}}"
+                                    @if(isset($_GET['company_id'])&&$_GET['company_id'] == $company->company_id)
+                                        selected=""
+                                    @endif>
+                                    {{$company->company_name}}
+                                </option>
                             @endforeach
                         </select>
-
                         <select name="in_use" class="form-control">
-                            <option value="2">全部</option>
-                            <option value="1">正在使用</option>
-                            <option value="0">已退房</option>
+                            <option value="2" @if(isset($_GET['in_use'])&&$_GET['in_use'] == 2) selected=""@endif>全部</option>
+                            <option value="1" @if(isset($_GET['in_use'])&&$_GET['in_use'] == 1) selected=""@endif>正在使用</option>
+                            <option value="0" @if(isset($_GET['in_use'])&&$_GET['in_use'] == 0) selected=""@endif>已退房</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">搜索</button>&nbsp;&nbsp;或&nbsp;
@@ -47,9 +50,6 @@
             </div>
         </div>
     </nav>
-    <div class="function-area">
-        <button class="btn btn-success btn-sm" onclick="javascript:location='{{ url('utility/add') }}';">录入底数</button>
-    </div>
 @endsection
 @section('content')
     <div class="table-responsive">
@@ -66,6 +66,7 @@
                 <th>入住时水表</th>
                 <th>退房时电表</th>
                 <th>退房时水表</th>
+                <th>操作</th>
             </tr>
             </thead>
 
@@ -81,9 +82,16 @@
                     <td>{{ $record->enter_water_base }}</td>
                     <td>{{ $record->quit_electric_base }}</td>
                     <td>{{ $record->quit_water_base }}</td>
+                    <td>
+                        <a href="{{url('record/edit', $record->id)}}" class="btn btn-success btn-xs">修改</a>
+                    </td>
                 </tr>
             @endforeach
         </table>
+        {!! $records->appends([
+                'company_id'=>isset($_GET['company_id']) ? $_GET['company_id'] : 0,
+                'in_use'=>isset($_GET['in_use']) ? $_GET['in_use'] :0,
+            ])->render() !!}
     </div>
 @endsection
 @section('modal')
