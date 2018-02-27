@@ -33,6 +33,9 @@ class RecordController extends Controller
         return view('record.index', compact('records', 'companies', 'count'));
     }
 
+    /**
+     * 搜索
+     */
     public function getSearch(Request $request)
     {
         $companyId = $request->company_id;
@@ -61,6 +64,34 @@ class RecordController extends Controller
         $companies = Company::get();
 
         return view('record.index', compact('records', 'companies', 'count'));
+    }
+
+    /**
+     * 修改
+     */
+    public function getEdit($id)
+    {
+        $record = Record::find((int) $id);
+
+        return view('record.edit', compact('record'));
+    }
+
+    /**
+     * 存储修改的数据
+     */
+    public function postUpdate(Request $request)
+    {
+        $record = Record::find($request->id);
+
+        $record->enter_electric_base = $request->enter_electric_base;
+        $record->enter_water_base = $request->enter_water_base;
+        if ($record->in_use === 0) {
+            $record->quit_electric_base = $request->quit_electric_base;
+            $record->quit_water_base = $request->quit_water_base;
+        }
+
+        $record->save();
+        return response()->json(['message'=>'操作成功！', 'status'=>1]);
     }
 
     /**
@@ -151,6 +182,9 @@ class RecordController extends Controller
         return response()->json(['message'=>$this->errorMsg, 'status'=>0]);
     }
 
+    /**
+     * 某个公司退租某个房间
+     */
     public function postComplete(Request $request) 
     {
         //字段验证
@@ -188,6 +222,11 @@ class RecordController extends Controller
     {
         if ($this->checkRoomIsNotEmpty($data['room_id'])) {
             $this->errorMsg = '失败：此房间已被占用！';
+            return false;
+        }
+
+        if ($this->checkCompanyIsQuit($data['company_id'])) {
+            $this->errorMsg = '失败：此公司已退租！';
             return false;
         }
         
@@ -239,6 +278,15 @@ class RecordController extends Controller
     {
         $room = Room::select('company_id')->find($roomId);
         if ($room->company_id > 0) { //已被占用
+            return true;
+        }
+        return false;
+    }
+
+    private function checkCompanyIsQuit($companyId)
+    {
+        $company = Company::find($companyId);
+        if ($company->is_quit == 1) {
             return true;
         }
         return false;

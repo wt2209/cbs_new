@@ -17,6 +17,27 @@
         <form id="form">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <table class="table table-hover table-condensed">
+                <tr>
+                    <th>类型</th>
+                    <td>
+                        <select name="type_id" class="form-control">
+                            @foreach($types as $type)
+                                <option value="{{$type->id}}" >{{$type->type_name}}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
+                    <th width="10%">楼号</th>
+                    <td width="20%">
+                        <input type="text" class="form-control input-sm" name="building"
+                               placeholder="例如：1， 综合楼"/>
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
                 <tr class="no-border">
                     <th width="10%">房间名</th>
                     <td width="20%">
@@ -26,14 +47,21 @@
                     <td width="10%"></td>
                     <td></td>
                 </tr>
+               
                 <tr>
-                    <th>类型</th>
+                    <th>房间人数</th>
                     <td>
-                        <select name="room_type" class="form-control">
-                            <option value="1" selected>居住用房</option>
-                            <option value="2">餐厅</option>
-                            <option value="3">服务用房</option>
-                        </select>
+                        <input type="text" class="form-control input-sm" name="person_number"
+                            placeholder="若非居住用房，填 0"/>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>月租金</th>
+                    <td>
+                        <input type="text" class="form-control input-sm" name="price"
+                            placeholder="若无，可填 0"/>
                     </td>
                     <td></td>
                     <td></td>

@@ -116,7 +116,8 @@ class RoomController extends Controller
         $structure = $this->getRoomStructure();
         $roomsWithFloor = $this->roomsGroupByFloor($rooms);
 
-        return view('room.index',  compact('structure', 'roomsWithFloor', 'count'));
+        $companies = Company::select('company_id', 'company_name')->get();
+        return view('room.index',  compact('structure', 'roomsWithFloor', 'count', 'companies'));
     }
 
     /**
@@ -125,7 +126,8 @@ class RoomController extends Controller
      */
     public function getAdd()
     {
-        return view('room.add');
+        $types = RoomType::get();
+        return view('room.add', compact('types'));
     }
 
     public function getEdit($id)
@@ -174,8 +176,11 @@ class RoomController extends Controller
     {
         //字段验证
         $validator = Validator::make($request->all(), [
-            'room_id'=>'integer|min:1',
-            'room_name' => 'required'
+            'type_id'=>'required|integer',
+            'building'=>'required',
+            'room_name' => 'required',
+            'price'=>'required|numeric',
+            'person_number'=>'required|integer',
         ]);
 
         //验证不通过，返回第一个错误信息
@@ -184,8 +189,7 @@ class RoomController extends Controller
         }
 
         //检测是否已经录入过此房间
-        $count = Room::where('room_name', $request->room_name)
-            ->count();
+        $count = Room::where('room_name', $request->room_name)->count();
         //若添加的房间已存在，则返回错误
         if ($count > 0) {
             exit(json_encode(['message'=>'失败：此房间已经存在!', 'status'=>0]));
@@ -193,8 +197,11 @@ class RoomController extends Controller
 
         //新建模型
         $room = new Room();
+        $room->building = $request->building;
+        $room->price = $request->price;
+        $room->person_number = $request->person_number;
         $room->room_name = $request->room_name;
-        $room->room_type = $request->room_type;
+        $room->type_id = $request->type_id;
         $room->room_remark = $request->room_remark;
 
         if ($room->save()) {

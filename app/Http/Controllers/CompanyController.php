@@ -488,15 +488,26 @@ class CompanyController extends Controller
         ]);
     }
 
-    public function getQuit($id)
+    /**
+     * 退租
+     */
+    public function getQuit(Request $request)
     {
-        // TODO 所有房间都要退房
-        $company = Company::find(intval($id));
-        $company->is_quit = 1;
+        $id = (int) $request->delete_id;
+        //必须先将所有房间退房
+        $count = Room::where('company_id', $id)->count();
+        if ($count > 0) {
+            return response()->json(['message'=>'失败：请先将所有房间退房！', 'status'=>0]);
+        }
 
-        exit('所有房间还未退房！！！');
-        $company->save();
-        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+        $company = Company::find($id);
+        if ($company) {
+            $company->is_quit = 1;
+            $company->quit_at = date('Y-m-d H:i:s');
+            $company->save();
+            return response()->json(['message'=>'操作成功！', 'status'=>1]);
+        }
+        return response()->json(['message'=>'失败：请正确操作！', 'status'=>0]);
     }
 
     private function validateCompanyId($companyId)

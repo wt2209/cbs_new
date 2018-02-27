@@ -21,11 +21,20 @@ return [
         'building' => [
             'required' => '失败：必须填写楼号！',
         ],
-        'room_number' => [
+        'room_name' => [
             'required' => '失败：必须填写房间号！',
-            'integer'=>'失败：房间号必须是一个数字！',
-            'max'=>'失败：房间号必须小于65535',
-            'min'=>'失败：房间号必须大于1'
+        ],
+        'type_id' => [
+            'required' => '失败：必须填写房间类型！',
+            'integer' => '失败：房间类型错误！',
+        ],
+        'price' => [
+            'required' => '失败：必须填写价格！',
+            'numeric' => '失败：价格必须是数字！',
+        ],
+        'person_number' => [
+            'required' => '失败：必须填写房间人数！',
+            'integer' => '失败：人数必须是整数！',
         ],
         'company_id' => [
             'required' => '失败：必选选择或填写公司名',
@@ -99,6 +108,19 @@ return [
         'gender' => [
             'required'=>"失败：必须选取性别！",
             'between'=>'失败：性别取值错误！',
+        ],
+
+
+        //年月
+        'year' => [
+            'required'=>"失败：请填写正确的年份！",
+            'between'=>'失败：请填写正确的年份！',
+            'integer'=>'失败：请填写正确的年份！',
+        ],
+        'month' => [
+            'required'=>"失败：请填写正确的月份！",
+            'between'=>'失败：请填写正确的月份！',
+            'integer'=>'失败：请填写正确的月份！',
         ],
     ],
 

@@ -110,15 +110,16 @@
                         <a href="{{ url('company/delete-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">减房</a>
                         <a href="{{ url('company/edit/'.$company['company_id']) }}" class="btn btn-warning btn-xs">修改</a>
                         <a href="{{ url('punish/create/'.$company['company_id']) }}" class="btn btn-danger btn-xs">处罚</a>
-                        <a href="{{ url('company/quit/'.$company['company_id']) }}" class="btn btn-danger btn-xs">退租</a>
+                        <button delete_id="{{ $company['company_id'] }}" class="btn btn-danger btn-xs delete-button">退租</button>
                     </div>
                 </div>
             </div>
         </div>
     @endforeach
-
+@endsection
+@section('modal')
     <!-- delete modal -->
-    <div id="modal" class="modal bs-example-modal-sm">
+    <div id="delete-modal" class="modal bs-example-modal-sm fade">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
@@ -131,13 +132,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button id="modal-confirm" type="button" class="btn btn-primary">确认</button>
+                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>
     </div>
-
 @endsection
 @section('bottom')
     <p>共计 {{ $counts['total'] }} 个公司</p>
@@ -153,4 +153,9 @@
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
+    <script>
+        //退租
+        ajaxDelete('{{ url('company/quit/') }}');
+
+    </script>
 @endsection

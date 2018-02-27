@@ -41,6 +41,7 @@
                     {{--<li class="left_back">个人日程</li>--}}
                     <li class="left_back">承包商公司</li>
                     <li class="left_back">房间管理</li>
+                    <li class="left_back">生成报表</li>
                 </ul>
             </div>
             <div id="right_main_nav">
@@ -77,6 +78,14 @@
                         </li>
                         <li>
                             <a href="{{ url('room/add') }}" target="iframe">添加房间</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list_title">
+                    <span>生成报表</span>
+                    <ul class="list_detail">
+                        <li>
+                            <a href="{{ url('sheet/index') }}" target="iframe">生成报表</a>
                         </li>
                     </ul>
                 </div>
