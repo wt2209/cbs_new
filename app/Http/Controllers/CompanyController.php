@@ -53,6 +53,12 @@ class CompanyController extends Controller
         return view('company.index', compact('companies', 'counts'));
     }
 
+    public function getHistory()
+    {
+        $companies = Company::get();
+        return view('company.history', compact('companies'));
+    }
+
 
     /**
      * 获取各公司所用房间数量
@@ -214,7 +220,7 @@ class CompanyController extends Controller
             $companyId = $company->getKey();
             //提交事务
             DB::commit();
-            return $this->getSelectRooms($companyId);
+            return $this->getAddRooms($companyId);
         } else {
             //错误，回滚事务
             DB::rollBack();
@@ -270,59 +276,37 @@ class CompanyController extends Controller
      * @param $companyId
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
-    public function getSelectRooms($companyId)
+    public function getAddRooms($companyId)
     {
-        if (!$companyId) {
-            return response()->redirectTo(url('common/302'));
-        }
-        return view('company.selectRooms',['company_id'=>$companyId]);
+        $emptyRooms = $this->getEmptyRoomsGroupByType();
+
+        // echo '<pre>';
+        // print_r($emptyRooms);die;
+        return view('company.addRooms',['company_id'=>$companyId, 'emptyRooms'=>$emptyRooms]);
     }
 
-    /**
-     * 存储已经选好的房间
-     * @param Request $request
+     /**
+     * 获取空房间
      * @return \Illuminate\Http\JsonResponse
      */
-    public function postStoreSelectedRooms(Request $request)
+    private function getEmptyRoomsGroupByType()
     {
-        print_r($request->rooms);die;
+        $rooms = Room::where('company_id', 0)
+            ->select('room_id', 'type_id', 'room_name', 'person_number')
+            ->get();
 
+        $roomsGroupByType = $rooms->groupBy(function ($room, $key) {
+            return $room->type_id;
+        })->toArray();
 
-        //$roomDetails格式 : 1_2|2_1|3_1 ('room_id'_'gender')
-        $this->newRooms = explode('|', htmlspecialchars(strip_tags($request->roomDetails)));
-        $companyId = intval($request->company_id);
-        //是否是新公司入住
-        $isNewCompany = (isset($request->newCompany) && $request->newCompany == 1) ? 1 : 0;
-
-        //旧房间
-        $oldRooms = Room::where('company_id', $companyId)->get();
-        foreach ($oldRooms as $oldRoom) {
-            $this->oldRooms[] = $oldRoom->room_id . '_' .$oldRoom->gender;
+        $typeIdToTypeName = $this->typeIdToTypeName();
+        $ret = [];
+        foreach ($roomsGroupByType as $typeId => $r) {
+            $ret[$typeIdToTypeName[$typeId]] = $r;
         }
 
-        // 清除所有旧房间
-       Room::where('company_id', $companyId)->update([
-            'company_id'=>0,
-            'gender'=>1
-       ]);
-
-        //修改房间表
-        foreach ($this->newRooms as $currentRoomDetail) {
-            $currentRoomDetailArr = explode('_', $currentRoomDetail);
-            Room::where('room_id', intval($currentRoomDetailArr[0]))
-                ->update([
-                    'company_id'=>$companyId,
-                    'gender'=>intval($currentRoomDetailArr[1])
-                ]);
-        }
-
-        CompanyLogController::log($companyId, $isNewCompany, $request->user()->id, $this->oldRooms, $this->newRooms);
-
-        //下一步：存储变动房间的水电底数
-        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+        return $ret;
     }
-
-
 
     /**
      * 指定公司明细

@@ -19,6 +19,11 @@ class Record extends Model
     }
 
     
+    public function getGenderAttribute($value)
+    {
+        return $value == 1 ? '男' : '女';
+    }
+
     public function getEnteredAtAttribute($value)
     {
         return substr($value,0,10);

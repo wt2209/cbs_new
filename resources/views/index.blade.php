@@ -64,6 +64,9 @@
                         <li>
                             <a href="{{ url('record/index') }}" target="iframe">房间使用记录</a>
                         </li>
+                        <li>
+                            <a href="{{ url('company/history') }}" target="iframe">历史公司记录</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="list_title">
@@ -191,9 +194,6 @@
                     <ul class="list_detail">
                         <li>
                             <a href="{{url('config/index')}}" target="iframe">系统配置</a>
-                        </li>
-                        <li>
-                            <a href="{{url('config/rent-type')}}" target="iframe">房间类型设置</a>
                         </li>
                     </ul>
                 </div>

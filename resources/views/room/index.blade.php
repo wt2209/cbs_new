@@ -85,8 +85,9 @@
                                     @if (isset($room->company->company_name))
                                         <button type="button" class="btn btn-danger btn-xs quit-button" company_id="{{$room->company_id}}" room_id="{{$room->room_id}}">退房</button>
                                     @else
-                                        <button type="button" class="btn btn-success btn-xs enter-button" room_id="{{$room->room_id}}">入住</button>
+                                        <button type="button" class="btn btn-primary btn-xs enter-button" room_id="{{$room->room_id}}">入住</button>
                                     @endif
+                                    <a href="{{url('room/edit', $room->room_id)}}" class="btn btn-success btn-xs">修改</a>
                                 </div>
                             </div>
                         </div>

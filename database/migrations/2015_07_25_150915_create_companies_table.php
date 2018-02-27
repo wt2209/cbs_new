@@ -23,6 +23,7 @@ class CreateCompaniesTable extends Migration
             $table->string('company_remark');
             //是否退租
             $table->tinyInteger('is_quit')->default('0');
+            $table->timestamp('quit_at')->default('0000-00-00 00:00:00');
             $table->timestamps();
         });
     }

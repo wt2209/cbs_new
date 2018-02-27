@@ -105,10 +105,11 @@
                     <strong>备注：</strong>
                     <p class="company-remark">{{ $company['company_remark'] }}</p>
                     <div class="func">
-                        <a href="{{ url('company/company-detail/'.$company['company_id']) }}" class="btn btn-primary btn-xs">房间明细</a>
-                        <a href="{{ url('punish/create/'.$company['company_id']) }}" class="btn btn-danger btn-xs">处罚</a>
-                        <a href="{{ url('company/change-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">调整房间</a>
+                        <a href="{{ url('company/company-detail/'.$company['company_id']) }}" class="btn btn-primary btn-xs">明细</a>
+                        <a href="{{ url('company/add-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">加房</a>
+                        <a href="{{ url('company/delete-rooms/'.$company['company_id']) }}" class="btn btn-success btn-xs">减房</a>
                         <a href="{{ url('company/edit/'.$company['company_id']) }}" class="btn btn-warning btn-xs">修改</a>
+                        <a href="{{ url('punish/create/'.$company['company_id']) }}" class="btn btn-danger btn-xs">处罚</a>
                         <a href="{{ url('company/quit/'.$company['company_id']) }}" class="btn btn-danger btn-xs">退租</a>
                     </div>
                 </div>

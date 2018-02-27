@@ -19,41 +19,6 @@ class RoomController extends Controller
         $this->middleware('fieldFilter', ['only'=>['postStore']]);
     }
 
-
-    /**
-     * 获取空房间
-     * @return \Illuminate\Http\JsonResponse
-     */
-    //TODO 还未修改
-    public function getEmptyRoomsGroupByType()
-    {
-        $rooms = Room::where('company_id', 0)
-            ->select('room_id', 'type_id', 'room_name', 'person_number', 'gender')
-            ->get();
-
-        $roomsGroupByType = $rooms->groupBy(function ($room, $key) {
-            return $room->type_id;
-        })->toArray();
-
-        $typeIdToTypeName = $this->typeIdToTypeName();
-        $return = [];
-        foreach ($roomsGroupByType as $typeId => $r) {
-            $return[$typeIdToTypeName[$typeId]] = $r;
-        }
-
-        return response()->json($return);
-    }
-
-    private function typeIdToTypeName()
-    {
-        $types = RoomType::get();
-        $ret = [];
-        foreach ($types as $type) {
-            $ret[$type->id] = $type->type_name;
-        }
-        return $ret;
-    }
-
     /**
      * 房间明细
      * @param Request $request

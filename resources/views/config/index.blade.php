@@ -57,27 +57,6 @@
                         单位：元
                     </td>
                 </tr>
-                <tr>
-                    <th>6人间费用</th>
-                    <td>
-                        <input  class="form-control" type="text" name="person_6" value="{{ $person_6 }}">
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>8人间费用</th>
-                    <td>
-                        <input  class="form-control" type="text" name="person_8" value="{{ $person_8 }}">
-                    </td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <th>12人间费用</th>
-                    <td>
-                        <input  class="form-control" type="text" name="person_12" value="{{ $person_12 }}">
-                    </td>
-                    <td></td>
-                </tr>
             </table>
             <div class="form-submit">
                 <button class="btn btn-success" id="submit">修 改</button>

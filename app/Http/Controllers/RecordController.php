@@ -32,6 +32,34 @@ class RecordController extends Controller
     }
 
     /**
+     * 批量入住
+     */
+    public function postMassCreate(Request $request)
+    {
+        $companyId = intval($request->company_id);
+        $items = explode('|', $request->rooms);
+
+        foreach ($items as $item) {
+            $tmp = explode('_', $item);
+            $roomId = (int) $tmp[0];
+            $gender = (int) $tmp[1];
+            $enterElectricBase = (int) $tmp[2];
+            $enterWaterBase = (int) $tmp[3];
+            $data = [
+                'room_id' => $roomId,
+                'company_id' => $companyId,
+                'gender' => $gender,
+                'enter_electric_base' => $enterElectricBase,
+                'enter_water_base' => $enterWaterBase,
+                'entered_at' => date('Y-m-d H:i:s'),
+            ];
+
+            $this->addOneRecord($data);
+        }
+        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+    }
+
+    /**
      * 某个公司入住某个房间
      */
     public function postCreate(Request $request)
@@ -105,10 +133,12 @@ class RecordController extends Controller
             return false;
         }
         
+        $roomId = $data['room_id'];
+        $companyId = $data['company_id'];
+
+        $data['price'] = Room::where('room_id', $roomId)->value('price');
         $data['in_use'] = 1; //标记为正在使用
         if (Record::create($data)) {
-            $roomId = $data['room_id'];
-            $companyId = $data['company_id'];
             return Room::where('room_id', $roomId)->update(['company_id' => $companyId]);
         }
         return false;

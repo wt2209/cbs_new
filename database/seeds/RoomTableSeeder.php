@@ -55,10 +55,6 @@ class RoomTableSeeder extends Seeder
                 ]);
             }
 
-
-            //公司占用
-            DB::table('room')->where('room_id', '<', 400)->update(['company_id'=>1]);
-
         } else {
             for ($i = 1; $i <= 4; $i++) {
                 $top = $i < 3 ? 18 : 16;

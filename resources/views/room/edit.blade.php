@@ -21,13 +21,27 @@
         <form id="form">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="room_id" value="{{ $room->room_id }}"/>
-            <input type="hidden" name="room_type" value="{{ $room->room_type }}"/>
-            <input type="hidden" name="room_name" value="{{ $room->room_name }}"/>
             <table class="table table-hover table-condensed">
                 <tr class="no-border">
                     <th width="10%">房间号</th>
                     <td width="20%">
                         {{ $room->room_name }}
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
+                    <th width="10%">房间人数</th>
+                    <td width="20%">
+                        <input type="text" class="form-control" value="{{ $room->person_number }}">
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
+                    <th width="10%">月租金</th>
+                    <td width="20%">
+                        <input type="text" class="form-control" value="{{ $room->price }}">
                     </td>
                     <td width="10%"></td>
                     <td></td>
