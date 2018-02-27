@@ -9,6 +9,7 @@ use App\Model\Company;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ExcelController;
 
 class RecordController extends Controller
 {
@@ -24,11 +25,12 @@ class RecordController extends Controller
      */
     public function getIndex()
     {
-        $records = Record::with('company')->with('room')->paginate(config('cbs.pageNumber'));;
+        $records = Record::with('company')->with('room')->paginate(config('cbs.pageNumber'));
+        $count = Record::count();
 
         $companies = Company::get();
 
-        return view('record.index', compact('records', 'companies'));
+        return view('record.index', compact('records', 'companies', 'count'));
     }
 
     public function getSearch(Request $request)
@@ -46,11 +48,19 @@ class RecordController extends Controller
             $model->where('in_use', $inUse);
         }
 
-        $records = $model->paginate(config('cbs.pageNumber'));;
+        //导出文件
+        if ($request->is_export == 1) {
+            $records = $model->get();
+            $this->exportFile($records);
+            return response()->redirectTo('record/index');
+        }
+
+        $count = $model->count();
+        $records = $model->paginate(config('cbs.pageNumber'));
 
         $companies = Company::get();
 
-        return view('record.index', compact('records', 'companies'));
+        return view('record.index', compact('records', 'companies', 'count'));
     }
 
     /**
@@ -77,6 +87,32 @@ class RecordController extends Controller
             ];
 
             $this->addOneRecord($data);
+        }
+        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+    }
+
+    /**
+     * 批量入住
+     */
+    public function postMassComplete(Request $request)
+    {
+        $companyId = intval($request->company_id);
+        $items = explode('|', $request->rooms);
+
+        foreach ($items as $item) {
+            $tmp = explode('_', $item);
+            $roomId = (int) $tmp[0];
+            $quitElectricBase = (int) $tmp[1];
+            $quitWaterBase = (int) $tmp[2];
+            $data = [
+                'room_id' => $roomId,
+                'company_id' => $companyId,
+                'quit_electric_base' => $quitElectricBase,
+                'quit_water_base' => $quitWaterBase,
+                'quit_at' => date('Y-m-d H:i:s'),
+            ];
+
+            $this->completeOneRecord($data);
         }
         return response()->json(['message'=>'操作成功！', 'status'=>1]);
     }
@@ -206,5 +242,40 @@ class RecordController extends Controller
             return true;
         }
         return false;
+    }
+
+    /**
+     * 导出文件
+     */
+    private function exportFile($records)
+    {
+        $filename = '公司入住记录-'.date('Ymd');
+        //标题行
+        $titleRow = ['公司入住记录-'.date('Ymd')];
+        //菜单第一行
+        $menuRow = ['序号','公司名','房间号','性别','月租金','入住时间','退房时间','入住时电表','入住时水表', '退房时电表', '退房时水表'];
+        $data = [
+            $titleRow,
+            $menuRow,
+        ];
+        // 序号
+        $serialNumber = 1;
+        foreach ($records as $record) {
+            $tmp = [
+                $serialNumber++,
+                $record->company->company_name,
+                $record->room->room_name,
+                $record->gender,
+                $record->price,
+                $record->entered_at,
+                $record->quit_at,
+                $record->enter_electric_base,
+                $record->enter_water_base,
+                $record->quit_electric_base,
+                $record->quit_water_base,
+            ];
+            $data[] = $tmp;
+        }
+        ExcelController::exportFile($filename, $data);
     }
 }

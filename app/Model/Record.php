@@ -36,20 +36,4 @@ class Record extends Model
         }
         return substr($value,0,10);
     }
-
-    public function getQuitElectricBaseAttribute($value)
-    {
-        if ($value == 0) {
-            return '';
-        }
-        return $value;
-    }
-
-    public function getQuitWaterBaseAttribute($value)
-    {
-        if ($value == 0) {
-            return '';
-        }
-        return $value;
-    }
 }

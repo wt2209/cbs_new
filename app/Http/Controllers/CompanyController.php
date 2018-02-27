@@ -280,9 +280,18 @@ class CompanyController extends Controller
     {
         $emptyRooms = $this->getEmptyRoomsGroupByType();
 
-        // echo '<pre>';
-        // print_r($emptyRooms);die;
         return view('company.addRooms',['company_id'=>$companyId, 'emptyRooms'=>$emptyRooms]);
+    }
+
+    /**
+     * 减少房间
+     */
+    public function getDeleteRooms($companyId)
+    {
+        $rooms = Room::where('company_id', (int)$companyId)->get();
+        $company = Company::find($companyId);
+
+        return view('company.deleteRooms', compact('rooms', 'company'));
     }
 
      /**

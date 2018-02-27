@@ -39,7 +39,7 @@
                     <script>
                         $('.export').click(function(){
                             var sParam = 'is_export=1&'+$('form.navbar-form').serialize();
-                            var sUrl = '{{ url('utility/base-search') }}' + '?' + sParam;
+                            var sUrl = '{{ url('record/search') }}' + '?' + sParam;
                             maskShow();
                             window.location = sUrl;
                             setTimeout(maskHide,2000);
@@ -80,8 +80,8 @@
                     <td>{{ $record->quit_at }}</td>
                     <td>{{ $record->enter_electric_base }}</td>
                     <td>{{ $record->enter_water_base }}</td>
-                    <td>{{ $record->quit_electric_base }}</td>
-                    <td>{{ $record->quit_water_base }}</td>
+                    <td>{{ $record->in_use == 1 ? '' : $record->quit_electric_base }}</td>
+                    <td>{{ $record->in_use == 1 ? '' : $record->quit_water_base }}</td>
                     <td>
                         <a href="{{url('record/edit', $record->id)}}" class="btn btn-success btn-xs">修改</a>
                     </td>
@@ -90,7 +90,7 @@
         </table>
         {!! $records->appends([
                 'company_id'=>isset($_GET['company_id']) ? $_GET['company_id'] : 0,
-                'in_use'=>isset($_GET['in_use']) ? $_GET['in_use'] :0,
+                'in_use'=>isset($_GET['in_use']) ? $_GET['in_use'] : 2,
             ])->render() !!}
     </div>
 @endsection
@@ -117,7 +117,7 @@
     </div>
 @endsection
 @section('bottom')
-    
+    <p>共有 {{$count}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
