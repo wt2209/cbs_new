@@ -20,6 +20,11 @@ class RecordController extends Controller
     public $errorMsg = '失败：未知错误！';
 
 
+    public function __construct()
+    {
+        $this->middleware('my.auth');
+    }
+    
     /**
      * 房间使用记录
      */
