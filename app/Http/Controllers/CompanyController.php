@@ -453,42 +453,6 @@ class CompanyController extends Controller
     }
 
     /**
-     * 调整房间
-     * @param $companyId
-     * @return \Illuminate\View\View
-     */
-    public function getChangeRooms($companyId)
-    {
-        //验证company_id的合法性
-        $this->validateCompanyId($companyId);
-
-        $rooms = Room::where('company_id', (int)$companyId)
-            ->get();
-        $livingRooms = $diningRooms = $serviceRooms =[];
-        foreach ($rooms as $room) {
-            switch ($room->room_type) {
-                case '1':
-                    $livingRooms[] = $room;
-                    break;
-                case '2':
-                    $diningRooms[] = $room;
-                    break;
-                case '3':
-                    $serviceRooms[] = $room;
-                    break;
-            }
-        }
-        $company = Company::find($companyId);
-
-        return view('company/changeRooms', [
-            'livingRooms'=>$livingRooms,
-            'diningRooms'=>$diningRooms,
-            'serviceRooms'=>$serviceRooms,
-            'company'=>$company
-        ]);
-    }
-
-    /**
      * 退租
      */
     public function getQuit(Request $request)
