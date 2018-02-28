@@ -17,7 +17,7 @@ class UtilityBaseTableSeeder extends Seeder
         //month=1,2
 
         $arr = [];
-        for ($i = 1; $i <= 11; $i++) {
+        for ($i = 1; $i <= 1156; $i++) {
             $arr[$i]['e'] = random_int(1, 99500);
             $arr[$i]['w'] = random_int(1, 9950);
             DB::table('utility_base')->insert([
@@ -31,7 +31,7 @@ class UtilityBaseTableSeeder extends Seeder
                 'u_base_remark' => '底数备注'
             ]);
         }
-        for ($i = 1; $i <= 11; $i++) {
+        for ($i = 1; $i <= 1156; $i++) {
             DB::table('utility_base')->insert([
                 'room_id'=> $i,
                 'water_base'=> $arr[$i]['w'] + random_int(1, 49),

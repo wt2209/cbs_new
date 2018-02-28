@@ -250,7 +250,7 @@ class RecordController extends Controller
         if ($this->checkRoomIsNotEmpty($data['room_id'])) { //房间非空，可以完成记录
             $insert = [
                 'in_use' => 0, //标记为已空
-                'quit_at' => date('Y-m-d H:i:s'),
+                'quit_at' => $data['quit_at'],
                 'quit_electric_base' => $data['quit_electric_base'],
                 'quit_water_base' => $data['quit_water_base'],
             ];

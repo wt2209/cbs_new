@@ -6,6 +6,7 @@ use App\Model\CompanyLog;
 use PHPExcel_Worksheet;
 use App\Model\Room;
 use App\Model\Company;
+use App\Model\UtilityBase;
 use App\Model\Record;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +30,6 @@ class SheetController extends Controller
      */
     public function getIndex()
     {
-
         return view('sheet.index');
     }
 
@@ -42,7 +42,7 @@ class SheetController extends Controller
         ]);
         //验证不通过，返回第一个错误信息
         if ($validator->fails()) {
-            return response()->json(['message'=>$validator->errors()->first(), 'status'=>0]);
+            return exit($validator->errors()->first(). '<a href="'.url('sheet/index').'">返回</a>');
         }
     
         $year = $request->year;
@@ -65,6 +65,9 @@ class SheetController extends Controller
         // echo " shang月zuihou天：{$lastMonthLastDay }";
         // die;
        
+        //上月水电底数
+        $lastMonthBases = $this->getBases($lastYear, $lastMonth);
+        $currentMonthBases = $this->getBases($year, $month);
         
         $records = Record::where('entered_at', '<', $nextMonthFirstDay)
             ->where('quit_at', '0000-00-00 00:00:00')
@@ -75,6 +78,7 @@ class SheetController extends Controller
         $data = [];
 
         foreach ($records as $record) {
+            $roomId = $record->room_id;
             $tmp = [
                 'company_name' => $record->company->company_name,
                 'room_name' => $record->room->room_name,
@@ -83,18 +87,26 @@ class SheetController extends Controller
 
             if (strtotime($record->entered_at) <= strtotime($lastMonthLastDay)) {
                 $tmp['start_day'] = $firstDay;
-                $tmp['start_electric_base'] = '月初底数';
-                $tmp['start_water_base'] = '月初底数';
+                $tmp['start_electric_base'] = isset($lastMonthBases[$roomId]['electric_base']) 
+                                                ? $lastMonthBases[$roomId]['electric_base'] 
+                                                : 0;
+                $tmp['start_water_base'] = isset($lastMonthBases[$roomId]['water_base']) 
+                                                ? $lastMonthBases[$roomId]['water_base'] 
+                                                : 0;
             } else {
                 $tmp['start_day'] = date('d', strtotime($record->entered_at));
                 $tmp['start_electric_base'] = $record->enter_electric_base;
                 $tmp['start_water_base'] = $record->enter_water_base;
             }
 
-            if ($record->quit_at === '0000-00-00') { // 还没退房
+            if (strtotime($record->quit_at) == 0 || strtotime($record->quit_at) >= strtotime($nextMonthFirstDay)) { // 还没退房
                 $tmp['end_day'] = $lastDay;
-                $tmp['end_electric_base'] = '月末底数';
-                $tmp['end_water_base'] = '月末底数';
+                $tmp['end_electric_base'] = isset($currentMonthBases[$roomId]['electric_base']) 
+                                            ? $currentMonthBases[$roomId]['electric_base'] 
+                                            : 0;
+                $tmp['end_water_base'] = isset($currentMonthBases[$roomId]['water_base']) 
+                                            ? $currentMonthBases[$roomId]['water_base'] 
+                                            : 0;
             } else {
                 $tmp['end_day'] = date('d', strtotime($record->quit_at));
                 $tmp['end_electric_base'] = $record->quit_electric_base;
@@ -109,44 +121,50 @@ class SheetController extends Controller
             $tmp['water'] = $tmp['end_water_base'] - $tmp['start_water_base'];
 
             $tmp['electric_money'] = round($tmp['electric'] * config('cbs.electricMoney'), 2);
-            $tmp['water_money'] = round($tmp['electric'] * config('cbs.waterMoney'), 2);
+            $tmp['water_money'] = round($tmp['water'] * config('cbs.waterMoney'), 2);
 
             $tmp['total_money'] = $tmp['rent_money'] + $tmp['electric_money'] + $tmp['water_money'];
+
+            //错误处理
+            if ($tmp['electric'] < 0) {
+                $tmp['electric'] = '错误';
+                $tmp['electric_money'] = '错误';
+                $tmp['total_money'] = '错误';
+            }
+            if ($tmp['water'] < 0) {
+                $tmp['water'] = '错误';
+                $tmp['water_money'] = '错误';
+                $tmp['total_money'] = '错误';
+            }
 
             $data[] = $tmp;
         }
 
         $this->exportReport($year, $month, $data);
+    }
 
-//我需要的数据
-// $tttt = [
-//     'company_name',
-//     'room_name',
-//     'price',
-//     'start_day',
-//     'end_day',
-//     'day_number',
-//     'rent_money',
-//     'start_electric_base',
-//     'end_electric_base',
-//     'electric',
-//     'electric_money',
-//     'start_water_base',
-//     'end_water_base',
-//     'water',
-//     'water_money',
-//     'total_money',
-// ];
+    private function getBases($year, $month)
+    {
+        $bases = UtilityBase::where('year', $year)
+            ->where('month', $month)
+            ->get();
+
+        $ret = [];
+        foreach ($bases as $base) {
+            $ret[$base->room_id]['electric_base'] = $base->electric_base;
+            $ret[$base->room_id]['water_base'] = $base->water_base;
+        }
+        return $ret;
     }
 
 
     private function exportReport($year, $month, $records)
     {
-        $filename = $year . '年' . $month . '月报表' . '-' . date('Ymd');
+        $filename = $year . '年' . $month . '月报表源数据' . '-' . date('Ymd');
         //标题行 
         $titleRow = [$filename];
         //菜单第一行
-        $menuRow = ['序号', '公司名', '房间号', '开始日', '结束日', '天数', '月租金', 
+        $menuRow = ['序号', '公司名', '房间号', '开始日', '结束日', '天数', '月租金', '房费',
                     '上期电表数', '本期电表数', '用电量', '电费', 
                     '上期水表数', '本期水表数', '用水量', '水费', 
                     '总金额'];
@@ -164,6 +182,7 @@ class SheetController extends Controller
                 $record['start_day'],
                 $record['end_day'],
                 $record['day_number'],
+                $record['price'],
                 $record['rent_money'],
                 $record['start_electric_base'],
                 $record['end_electric_base'],
