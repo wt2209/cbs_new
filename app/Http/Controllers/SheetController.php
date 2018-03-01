@@ -99,7 +99,7 @@ class SheetController extends Controller
                 $tmp['start_water_base'] = $record->enter_water_base;
             }
 
-            if (strtotime($record->quit_at) == 0 || strtotime($record->quit_at) >= strtotime($nextMonthFirstDay)) { // 还没退房
+            if ($record->in_use == 1 || strtotime($record->quit_at) >= strtotime($nextMonthFirstDay)) { // 还没退房
                 $tmp['end_day'] = $lastDay;
                 $tmp['end_electric_base'] = isset($currentMonthBases[$roomId]['electric_base']) 
                                             ? $currentMonthBases[$roomId]['electric_base'] 

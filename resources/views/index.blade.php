@@ -9,28 +9,7 @@
 <body>
 
 <audio src="{{ asset('sound/1.wav') }}" id="audio"></audio>
-{{--头部区域--}}
-{{--<div class="header_content">
-    <div class="logo">
-        <img src="{{ asset('/images/man_logo.jpg') }}" alt="logo" />
-        <h3 class="nav_list">承包商公寓管理系统</h3>
-    </div>
-    <div class="right_nav">
-        <div class="text_left">
-        </div>
-        <div class="text_right">
-            <ul class="nav_return">
-                <li><img src="{{ asset('/images/return.gif') }}" width="13" height="21" />&nbsp;返回 [
-                    <a href="">待定1</a>|
-                    <a href="">待定2</a> ]
-                </li>
-                <li> [<a href="">待定3</a>]</li>
-                <li> [<a href="">退出</a>]&nbsp;&nbsp;</li>
-            </ul>
-        </div>
-    </div>
-</div>--}}
-{{--头部区域结束--}}
+
 {{--左侧区域--}}
 <div id="left_content">
     <div id="user_info">欢迎您，<strong>{{ $user->user_name }}</strong><br />[<a href="{{ url('/logout') }}">退出</a>]</div>
@@ -45,14 +24,6 @@
                 </ul>
             </div>
             <div id="right_main_nav">
-{{--                <div class="list_title">
-                    <span>个人日程</span>
-                    <ul class="list_detail">
-                        <li>
-                            <a href="{{ url('calendar/index') }}" target="iframe">个人日程</a>
-                        </li>
-                    </ul>
-                </div>--}}
                 <div class="list_title">
                     <span>公司管理</span>
                     <ul class="list_detail">
@@ -176,23 +147,6 @@
         <div class="list_item">
             <div id="left_main_nav">
                 <ul>
-                    <li class="left_back">每月报表</li>
-                </ul>
-            </div>
-            <div id="right_main_nav">
-                <div class="list_title">
-                    <span>每月报表</span>
-                    <ul class="list_detail">
-                        <li>
-                            <a href="{{ url('sheet/index') }}" target="iframe">月报表</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="list_item">
-            <div id="left_main_nav">
-                <ul>
                     <li class="left_back">配置项</li>
                     <li class="left_back">用户与权限</li>
                 </ul>
@@ -229,12 +183,6 @@
             </div>
         </div>
     </div>
-    {{--<div id="switchpic">
-        <a href="javascript:;">
-            <img src="{{ asset('images/switch_left.gif') }}" alt="隐藏左侧导航栏" id="ImgArrow" />
-        </a>
-    </div>--}}
-
 </div>
 {{--左侧区域结束--}}
 {{--右侧区域--}}
@@ -264,12 +212,6 @@
                 罚款管理
                 <p class="sub_message">
                     包含所有的罚款项目
-                </p>
-            </li>
-            <li class="man_nav">
-                文件管理
-                <p class="sub_message">
-                    管理必要的文件，如月报表
                 </p>
             </li>
             <li class="man_nav">
