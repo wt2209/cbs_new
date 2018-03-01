@@ -72,9 +72,11 @@
                             <div class="title">
                                 <h3>
                                     {{$room->room_name}}
+                                    @if ($room->person_number > 0)
                                     <span style="font-weight: normal;font-size: 12px;">
                                         ({{$room->person_number}}人间)
                                     </span>
+                                    @endif
                                 </h3>
                             </div>
                             <div class="room-content">

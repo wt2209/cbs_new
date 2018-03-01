@@ -41,7 +41,7 @@
                     <td>{{ $company->manager_tel }}</td>
                     <td>{{ $company->is_quit == 0 ? '正常' : '已退租' }}</td>
                     <td>{{ $company->created_at }}</td>
-                    <td>{{ $company->quit_at }}</td>
+                    <td>{{ $company->is_quit == 0 ? '' : $company->quit_at }}</td>
                     <td>{{ $company->company_remark }}</td>
                 </tr>
             @endforeach
