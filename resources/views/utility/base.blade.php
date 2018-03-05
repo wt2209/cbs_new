@@ -58,7 +58,7 @@
 
             @foreach($bases as $base)
                 <tr>
-                    <td>{{ $base->room_name }}</td>
+                    <td>{{ $base->room->room_name }}</td>
                     <td>{{ $base->year }}-{{ $base->month }} </td>
                     <td>{{ $base->electric_base }}</td>
                     <td>{{ $base->water_base }}</td>
@@ -104,7 +104,7 @@
     <p>共有 {{ $count }} 条记录</p>
     <div class="container-fluid">
         <div class="navbar-header">
-            <form id="calculate" class="navbar-form navbar-left" role="search">
+            <!-- <form id="calculate" class="navbar-form navbar-left" role="search">
                 <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                 <div class="form-group">
                     计算
@@ -113,7 +113,7 @@
                     的水电费
                 </div>
                 <button id="submit" class="btn btn-primary">计算</button>
-            </form>
+            </form> -->
         </div>
     </div>
 @endsection

@@ -12,4 +12,9 @@ class UtilityBase extends Model
 
     //主键
     protected $primaryKey = 'u_base_id';
+
+    public function room()
+    {
+        return $this->belongsTo('App\Model\Room', 'room_id', 'room_id');
+    }
 }

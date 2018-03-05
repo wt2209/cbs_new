@@ -87,10 +87,13 @@
                     </p>--}}
                     <div class="all-rooms">
                         @if(count($company['count'])>0)
-                        @foreach($company['count'] as $type => $count)
-                                <p class="room-type">{{ $type }}：</p>
-                                <p class="count"><span style='color:red'>{{$count}}</span>套</p>
-                        @endforeach
+                        <div class="count">
+                            @foreach($company['count'] as $type => $count)
+                                <!-- <p class="room-type">{{ $type }}：</p> -->
+                                <!-- <p class="count"><span style='color:red'>{{$count}}</span>套</p> -->
+                                <p>{{$type}}：<span style='color:red'>{{$count}}</span>套</p>
+                            @endforeach
+                    </div>
                         @endif
                         {{--@if ($company->rooms)--}}
                             {{--房间多于8个--}}

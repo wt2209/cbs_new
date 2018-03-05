@@ -172,9 +172,9 @@ class UtilityController extends Controller{
     public function getBase()
     {
         $count = $this->setBaseCount();
-        $bases = DB::table('utility_base')
-            ->join('room', 'utility_base.room_id', '=', 'room.room_id')
+        $bases = UtilityBase::with('room')
             ->paginate(config('cbs.pageNumber'));
+
         return view('utility.base', ['bases'=>$bases, 'count'=>$count]);
     }
 
@@ -183,37 +183,28 @@ class UtilityController extends Controller{
         $roomName = trim(strip_tags(htmlspecialchars($request->room_name)));
         $yearMonth = trim(strip_tags(htmlspecialchars($request->year_month)));
 
-        $whereArr = [];
+        $model = UtilityBase::where('u_base_id', '>', 0);
+
         if (!empty($roomName)) { //房间号不空，不用处理公司名
-            $whereArr[] = 'cbs_room.room_name = ' . $roomName;
+            $roomId = Room::where('room_name', $roomName)->value('room_id');
+            $model->where('room_id', $roomId);
         }
         if (!empty($yearMonth)) {
             $tmp = explode('-', $yearMonth);
             $year = isset($tmp[0]) ? intval($tmp[0]) : 0;
             $month = isset($tmp[1]) ? intval($tmp[1]) : 0;
-            $whereArr[] = "year = {$year} and month = {$month}";
-        }
-
-        $where = implode(' and ', $whereArr);
-        if (!$where) { //条件为空，显示所有结果
-            $where = 'u_base_id != 0';
+            $model->where('year', $year)->where('month', $month);
         }
 
         //导出文件
         if ($request->is_export == 1) {
-            $utilitiyBases = DB::table('utility_base')
-                ->join('room', 'utility_base.room_id', '=', 'room.room_id')
-                ->whereRaw($where)
-                ->get();
+            $utilitiyBases = $model->get();
             $this->exportBaseFile($utilitiyBases);
             return response()->redirectTo('utility/base');
         }
 
-        $count = $this->setBaseCount($where);
-        $bases = DB::table('utility_base')
-            ->join('room', 'utility_base.room_id', '=', 'room.room_id')
-            ->whereRaw($where)
-            ->paginate(config('cbs.pageNumber'));
+        $count = $model->count();
+        $bases = $model->paginate(config('cbs.pageNumber'));
         return view('utility.base', ['bases'=>$bases, 'count'=>$count]);
     }
 
@@ -319,8 +310,7 @@ class UtilityController extends Controller{
      */
     public function getEdit($UtilityId)
     {
-        $utility = Utility::join('room', 'room.room_id', '=', 'utility.room_id')
-                        ->find($UtilityId);
+        $utility = Utility::find($UtilityId);
         return view('utility.edit', ['utility'=>$utility]);
     }
 
@@ -331,8 +321,7 @@ class UtilityController extends Controller{
      */
     public function getEditBase($UtilityBaseId)
     {
-        $utilityBase = UtilityBase::join('room', 'room.room_id', '=', 'utility_base.room_id')
-            ->find($UtilityBaseId);
+        $utilityBase = UtilityBase::find($UtilityBaseId);
         return view('utility.editBase', ['utilityBase'=>$utilityBase]);
     }
 

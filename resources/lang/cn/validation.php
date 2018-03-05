@@ -100,6 +100,9 @@ return [
         'quit_at' => [
             'date_format' => '失败：日期格式错误！',
         ],
+        'created_at' => [
+            'date_format' => '失败：日期格式错误！',
+        ],
         'entered_at' => [
             'date_format' => '失败：日期格式错误！',
         ],

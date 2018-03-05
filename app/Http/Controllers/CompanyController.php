@@ -121,13 +121,12 @@ class CompanyController extends Controller
             }
 
             foreach ($company['count'] as $typename => $c) {
-                if (isset($count[$typename])) {
+                if (isset($count['rooms'][$typename])) {
                     $count['rooms'][$typename] = $count['rooms'][$typename] + $c;
                 } else {
                     $count['rooms'][$typename] = $c;
                 }
             }
-
         }
         return $count;
     }
@@ -142,24 +141,24 @@ class CompanyController extends Controller
         $companyName = trim(strip_tags(htmlspecialchars($request->company_name)));
         $personName = trim(strip_tags(htmlspecialchars($request->person_name)));
 
-        $whereArr = ['is_quit=0'];
+        $model = Company::where('is_quit', 0);
         if (!empty($companyName)) {
-            $whereArr[] = 'company_name like "%'.$companyName.'%"';
+            $model->where('company_name', 'like', '%' . $companyName . '%');
         } elseif (!empty($personName)) {
-            $whereArr[] = '(linkman like "%'.$personName.'%" or manager like "%'.$personName.'%")';
+            $model->where('linkman', 'like', '%' . $personName . '%')
+                    ->orWhere('manager', 'like', '%' . $personName . '%');
         }
-        $whereStr = implode(' and ', $whereArr);
         //导出文件
         if ($request->is_export == 1) {
-            $companies = Company::whereRaw($whereStr)->get();
+            $companies = $company->get();
             $this->exportFile($companies);
             return response()->redirectTo('company/index');
         }
-        $companies = Company::whereRaw($whereStr)->paginate(config('cbs.pageNumber'));
+        $companiesCollection = $model->get();
+        $companies = $this->companyRoomsCount($companiesCollection->toArray());
 
-
-        $count = $this->companyCount($whereStr);
-        return view('company.index', ['companies'=>$companies, 'count'=>$count]);
+        $counts = $this->companyCount($companies);
+        return view('company.index', ['companies'=>$companies, 'counts'=>$counts]);
     }
 
     /**
@@ -198,7 +197,6 @@ class CompanyController extends Controller
             'manager'=>'between:1,5',
             'manager_tel'=>'numeric',
             'company_remark'=>'between:1,255',
-            'type'=>'integer|min:1|max:3'
         ]);
         //验证不通过，返回第一个错误信息
         if ($validator->fails()) {
@@ -239,7 +237,7 @@ class CompanyController extends Controller
             'manager'=>'between:1,5',
             'manager_tel'=>'numeric',
             'company_remark'=>'between:1,255',
-            'type'=>'integer|min:1|max:3'
+            'created_at'=>'date_format:Y-m-d',
         ]);
         //验证不通过，返回第一个错误信息
         if ($validator->fails()) {
@@ -255,6 +253,7 @@ class CompanyController extends Controller
             $company->manager = $request->manager;
             $company->manager_tel = $request->manager_tel;
             $company->company_remark = $request->company_remark;
+            $company->created_at = $request->created_at;
             //开启事务
             DB::beginTransaction();
             if ($company->save()) {

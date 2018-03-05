@@ -76,7 +76,9 @@
                                 @foreach($typeDetail as $personNumber => $rooms)
                                     <div class="rooms">
                                         <p class="person-number">
-                                            <span style="color:red">{{$personNumber}}</span> 人间 -
+                                            @if ($personNumber > 0)
+                                                {{$personNumber}} 人间 -
+                                            @endif
                                             <span style="color:red">{{$company->count[$typeId][$personNumber]}}</span>套：
                                         </p>
                                         <p class="room-detail">

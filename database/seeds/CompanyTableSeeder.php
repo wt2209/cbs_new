@@ -11,8 +11,9 @@ class CompanyTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 16; $i++) {
+        for ($i = 72; $i <= 121; $i++) {
             DB::table('company')->insert([
+                'company_id'=>$i,
                 'company_name'=> '公司'.$i,
                 'company_description'=> '我是房间说明'.str_random(10),
                 'linkman'=> str_random(3),

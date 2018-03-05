@@ -25,7 +25,7 @@
                 <tr class="no-border">
                     <th width="10%">房间号</th>
                     <td width="20%">
-                        {{ $utilityBase->building }}-{{ $utilityBase->room_number }}
+                        {{ $utilityBase->room->room_name}}
                     </td>
                     <td width="10%"></td>
                     <td></td>

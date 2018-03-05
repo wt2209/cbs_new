@@ -196,14 +196,18 @@ table tr.no-border {
       .company .company-content .down .all-rooms {
         height: 54px;
       overflow: hidden;
-      margin:3px 0 3px 50px;}
+      margin:3px 0;}
 
 
-      .company .company-content .down .all-rooms p{
+      .company .company-content .down .all-rooms .count{
         line-height: 18px;
         margin:0;
         float: left;
-        width:100px;
+      }
+      .company .company-content .down .all-rooms .count p{
+        display: inline-block;
+        padding:5px 10px;
+        width:120px;
       }
 
 /*# sourceMappingURL=index.css.map */

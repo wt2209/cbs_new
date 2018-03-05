@@ -70,6 +70,14 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <th>入住时间</th>
+                    <td>
+                        <input type="text" class="form-control input-sm" name="created_at" value="{{ $company->created_at }}"/>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
                     <th>备注</th>
                     <td colspan="2" width="30%">
                         <textarea name="company_remark" class="form-control" cols="30" rows="3">{{ $company->company_remark }}</textarea>

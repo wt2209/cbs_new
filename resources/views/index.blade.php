@@ -20,6 +20,7 @@
                     {{--<li class="left_back">个人日程</li>--}}
                     <li class="left_back">承包商公司</li>
                     <li class="left_back">房间管理</li>
+                    <li class="left_back">水电表底数</li>
                     <li class="left_back">生成报表</li>
                 </ul>
             </div>
@@ -49,6 +50,20 @@
                         </li>
                         <li>
                             <a href="{{ url('room/add') }}" target="iframe">添加房间</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list_title">
+                    <span>水电表底数</span>
+                    <ul class="list_detail">
+                        <li>
+                            <a href="{{ url('utility/base') }}" target="iframe">水电表底数</a>
+                        </li>
+                        <!-- <li>
+                            <a href="{{ url('utility/index') }}" target="iframe">水电费明细</a>
+                        </li> -->
+                        <li>
+                            <a href="{{ url('utility/add') }}" target="iframe">录入底数</a>
                         </li>
                     </ul>
                 </div>
@@ -97,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div class="list_item">
+        <!-- <div class="list_item">
             <div id="left_main_nav">
                 <ul>
                     <li class="left_back">水电相关</li>
@@ -119,7 +134,7 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="list_item">
             <div id="left_main_nav">
                 <ul>
@@ -202,12 +217,12 @@
                     维修相关
                 </p>
             </li>
-            <li class="man_nav" >
+            <!-- <li class="man_nav" >
                 水电相关
                 <p class="sub_message">
                     水电表录入、水电费计算、水电费明细等
                 </p>
-            </li>
+            </li> -->
             <li class="man_nav">
                 罚款管理
                 <p class="sub_message">
