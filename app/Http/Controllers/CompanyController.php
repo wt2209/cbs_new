@@ -144,9 +144,10 @@ class CompanyController extends Controller
         $model = Company::where('is_quit', 0);
         if (!empty($companyName)) {
             $model->where('company_name', 'like', '%' . $companyName . '%');
-        } elseif (!empty($personName)) {
+        } 
+        if (!empty($personName)) {
             $model->where('linkman', 'like', '%' . $personName . '%')
-                    ->orWhere('manager', 'like', '%' . $personName . '%');
+                  ->orWhere('manager', 'like', '%' . $personName . '%');
         }
         //导出文件
         if ($request->is_export == 1) {

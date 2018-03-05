@@ -18,7 +18,7 @@
                 <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('room/search') }}">
                     <div class="form-group dropdown" style="margin-right:80px;">
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            选择楼号
+                            {{$currentType}} - {{$currentBuilding}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -56,11 +56,6 @@
             </div>
         </div>
     </nav>
-    <div class="function-area">
-        @if(isset($currentType)&&isset($currentBuilding))
-        <p>当前位置：{{ $currentType}} >> {{$currentBuilding}}</p>
-        @endif
-    </div>
 @endsection
 @section('content')
     @foreach($roomsWithFloor as $key => $building)
