@@ -54,6 +54,14 @@
                     <td width="10%"></td>
                     <td></td>
                 </tr>
+                <tr class="no-border">
+                    <th width="10%">入住时间</th>
+                    <td width="20%">
+                        <input type="text" class="form-control" name="entered_at" value="{{ $record->entered_at }}">
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
 
                 @if ($record->in_use == 0) 
                     <tr class="no-border">
@@ -68,6 +76,14 @@
                         <th width="10%">退房时水表底数</th>
                         <td width="20%">
                             <input type="text" class="form-control" name="quit_water_base" value="{{ $record->quit_water_base }}">
+                        </td>
+                        <td width="10%"></td>
+                        <td></td>
+                    </tr>
+                    <tr class="no-border">
+                        <th width="10%">入住时间</th>
+                        <td width="20%">
+                            <input type="text" class="form-control" name="quit_at" value="{{ $record->quit_at }}">
                         </td>
                         <td width="10%"></td>
                         <td></td>

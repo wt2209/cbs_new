@@ -90,9 +90,11 @@ class RecordController extends Controller
 
         $record->enter_electric_base = $request->enter_electric_base;
         $record->enter_water_base = $request->enter_water_base;
+        $record->entered_at = $request->entered_at;
         if ($record->in_use === 0) {
             $record->quit_electric_base = $request->quit_electric_base;
             $record->quit_water_base = $request->quit_water_base;
+            $record->quit_at = $request->quit_at;
         }
 
         $record->save();
