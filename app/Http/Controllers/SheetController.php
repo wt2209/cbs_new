@@ -70,8 +70,10 @@ class SheetController extends Controller
         $currentMonthBases = $this->getBases($year, $month);
         
         $records = Record::where('entered_at', '<', $nextMonthFirstDay)
-            ->where('quit_at', '0000-00-00 00:00:00')
-            ->orWhere('quit_at', '>', $lastMonthLastDay)
+            ->where(function($query) use($lastMonthLastDay){
+                $query->where('quit_at', '0000-00-00 00:00:00')
+                    ->orWhere('quit_at', '>', $lastMonthLastDay);
+            })
             ->get();
 
         
