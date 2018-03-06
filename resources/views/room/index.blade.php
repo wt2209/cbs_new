@@ -18,7 +18,11 @@
                 <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('room/search') }}">
                     <div class="form-group dropdown" style="margin-right:80px;">
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            @if (isset($currentType) && isset($currentBuilding))
                             {{$currentType}} - {{$currentBuilding}}
+                            @else
+                            选择楼号
+                            @endif
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
