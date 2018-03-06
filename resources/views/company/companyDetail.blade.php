@@ -40,13 +40,13 @@
                 <tr>
                     <th>日常联系人</th>
                     <td>
-                        {{ $company->link_man }}
+                        {{ $company->linkman }}
                     </td>
                 </tr>
                 <tr>
                     <th>联系人电话</th>
                     <td>
-                        {{ $company->link_tel }}
+                        {{ $company->linkman_tel }}
                     </td>
                 </tr>
                 <tr>
