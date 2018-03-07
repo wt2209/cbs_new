@@ -81,7 +81,7 @@
                         <td></td>
                     </tr>
                     <tr class="no-border">
-                        <th width="10%">入住时间</th>
+                        <th width="10%">退房时间</th>
                         <td width="20%">
                             <input type="text" class="form-control" name="quit_at" value="{{ $record->quit_at }}">
                         </td>

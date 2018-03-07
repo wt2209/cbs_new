@@ -259,7 +259,7 @@ class RoomController extends Controller
         //标题行
         $titleRow = [$filename];
         //菜单第一行
-        $menuRow = ['序号','类型','楼号','房间名','状态','所属公司','性别','公司联系人','联系人电话','房间备注'];
+        $menuRow = ['序号','类型','楼号','房间名','状态','月租金','所属公司','性别','公司联系人','联系人电话','房间备注'];
         $data = [
             $titleRow,
             $menuRow,
@@ -274,6 +274,7 @@ class RoomController extends Controller
                     $room->building,
                     $room->room_name,
                     '正在使用',
+                    $room->price,
                     $room->company->company_name,
                     $room->gender == 1 ? '男': '女',
                     $room->company->linkman,
@@ -287,6 +288,7 @@ class RoomController extends Controller
                     $room->building,
                     $room->room_name,
                     '空房间',
+                    $room->price,
                     '',
                     '',
                     '',
