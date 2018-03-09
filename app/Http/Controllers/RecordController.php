@@ -87,7 +87,7 @@ class RecordController extends Controller
     public function postUpdate(Request $request)
     {
         $record = Record::find($request->id);
-
+        $record->price = $request->price;
         $record->enter_electric_base = $request->enter_electric_base;
         $record->enter_water_base = $request->enter_water_base;
         $record->entered_at = $request->entered_at;

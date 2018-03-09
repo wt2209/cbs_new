@@ -39,6 +39,14 @@
                     <td></td>
                 </tr>
                 <tr class="no-border">
+                    <th width="10%">月租金</th>
+                    <td width="20%">
+                        <input type="text" class="form-control" name="price" value="{{ $record->price }}">
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
                     <th width="10%">入住时电表底数</th>
                     <td width="20%">
                         <input type="text" class="form-control" name="enter_electric_base" value="{{ $record->enter_electric_base }}">
