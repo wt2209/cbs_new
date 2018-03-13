@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Model\Company;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Auth;
 
 class PunishController extends Controller
 {
@@ -126,7 +127,7 @@ class PunishController extends Controller
         $punish = new Punish();
         $punish->company_id = $request->company_id;
         //TODO user_id 需要处理
-        //$punish->user_id = $request->company_id;
+        $punish->user_id = Auth::user()->user_id;
         $punish->money = $request->money;
         $punish->reason = $request->reason;
         $punish->punish_remark = $request->punish_remark;
