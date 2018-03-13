@@ -14,9 +14,8 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('punish/uncharged-search') }}">
+                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('punish/uncharged-list') }}">
                     <div class="form-group">
-                        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                         <input type="text" class="form-control"  value="{{ $_GET['company_name'] or '' }}" name="company_name" placeholder="公司名">&nbsp;
                     </div>
                     <button type="submit" class="btn btn-primary">搜索</button>
@@ -47,7 +46,7 @@
                     <td>{{ $unchargedList->company->company_name }}</td>
                     <td>{{ $unchargedList->reason }}</td>
                     <td>{{ $unchargedList->money }}</td>
-                    <td>{{ $unchargedList->user_id }}</td>
+                    <td>{{ $unchargedList->user->user_name }}</td>
                     <td>{{ substr($unchargedList->created_at, 0, 10) }}</td>
                     <td>{{ $unchargedList->punish_remark }}</td>
                     <td>
@@ -86,8 +85,8 @@
     </div>
 @endsection
 @section('bottom')
-    <p>共有 {{ $count['totalNumber'] }} 条记录</p>
-    <p>共计 {{ $count['totalMoney'] }} 元</p>
+    <p>当前共有 {{ $unchargedLists->total() }} 条记录</p>
+    <p>当前共计 {{ $totalMoney }} 元</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

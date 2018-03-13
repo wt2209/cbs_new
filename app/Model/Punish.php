@@ -19,18 +19,18 @@ class Punish extends Model
      */
     public function company()
     {
-        return $this->belongsTo('App\Model\Company', 'company_id');
+        return $this->belongsTo('App\Model\Company', 'company_id', 'company_id');
     }
 
     //TODO user 与cancel_user 是否能通过这种方式解决？
-    /*public function user()
+    public function user()
     {
-        return $this->belongsTo('App\Model\Company', 'company_id');
+        return $this->belongsTo('App\User', 'user_id');
     }
 
-    public function cancelUser()
+    public function cancel()
     {
-        return $this->belongsTo('App\Model\Company', 'company_id');
-    }*/
+        return $this->belongsTo('App\User', 'cancel_user_id');
+    }
 
 }

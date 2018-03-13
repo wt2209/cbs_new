@@ -14,9 +14,8 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('punish/canceled-search') }}">
+                <form class="navbar-form navbar-left" role="search"  method="get" action="{{ url('punish/canceled-list') }}">
                     <div class="form-group">
-                        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                         <input type="text" class="form-control"  value="{{ $_GET['company_name'] or '' }}" name="company_name" placeholder="公司名">&nbsp;
                     </div>
                     <button type="submit" class="btn btn-primary">搜索</button>
@@ -49,9 +48,9 @@
                     <td>{{ $canceledList->company->company_name }}</td>
                     <td>{{ $canceledList->reason }}</td>
                     <td>{{ $canceledList->money }}</td>
-                    <td>{{ $canceledList->user_id }}</td>
+                    <td>{{ $canceledList->user->user_name }}</td>
                     <td>{{ substr($canceledList->created_at, 0, 10) }}</td>
-                    <td>{{ $canceledList->cancel_user_id }}</td>
+                    <td>{{ $canceledList->cancel->user_name }}</td>
                     <td>{{ $canceledList->cancel_reason }}</td>
                     <td>{{ substr($canceledList->cancel_at, 0, 10) }}</td>
                     <td>{{ $canceledList->punish_remark }}</td>
@@ -64,8 +63,8 @@
     </div>
 @endsection
 @section('bottom')
-    <p>共有 {{ $count['totalNumber'] }} 条记录</p>
-    <p>共计 {{ $count['totalMoney'] }} 元</p>
+    <p>当前共有 {{ $canceledLists->total() }} 条记录</p>
+    <p>当前共计 {{ $totalMoney }} 元</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

@@ -22,55 +22,65 @@ class PunishController extends Controller
      * 已缴费列表
      * @return \Illuminate\View\View
      */
-    public function getChargedList()
+    public function getChargedList(Request $request)
     {
         //TODO 需要处理user_id 和cancel_user_id
-        $chargedLists = Punish::where('is_charged', 1)
-            ->where('is_canceled', 0)
-            ->paginate(config('cbs.pageNumber'));
-        $count = $this->setCountMessage('charged');
-        return view('punish.charged', ['chargedLists'=>$chargedLists, 'count'=>$count]);
+        $model = Punish::with('user')
+            ->where('is_charged', 1)
+            ->where('is_canceled', 0);
+
+        if ($request->company_name) {
+            $company_id = (int)Company::where('company_name', 'like', '%'. $request->company_name .'%')->value('company_id');
+            $model->where('company_id', $company_id);
+        }
+
+        $totalMoney = $model->sum('money');
+
+        $chargedLists = $model->paginate(1);
+       
+        return view('punish.charged', compact('chargedLists', 'totalMoney'));
     }
 
     /**
      * 未缴费列表
      * @return \Illuminate\View\View
      */
-    public function getUnchargedList()
+    public function getUnchargedList(Request $request)
     {
         //TODO 需要处理user_id 和cancel_user_id
-        $unchargedLists = Punish::where('is_charged', 0)
-            ->where('is_canceled', 0)
-            ->paginate(config('cbs.pageNumber'));
-        $count = $this->setCountMessage('uncharged');
-        return view('punish.uncharged', ['unchargedLists'=>$unchargedLists, 'count'=>$count]);
+        $model = Punish::with('user')
+            ->where('is_charged', 0)
+            ->where('is_canceled', 0);
+
+        if ($request->company_name) {
+            $company_id = (int)Company::where('company_name', 'like', '%'. $request->company_name .'%')->value('company_id');
+            $model->where('company_id', $company_id);
+        }
+        $totalMoney = $model->sum('money');
+        
+        $unchargedLists = $model->paginate(config('cbs.pageNumber'));
+        return view('punish.uncharged', compact('unchargedLists', 'totalMoney'));
     }
 
     /**
      * 撤销列表
      * @return \Illuminate\View\View
      */
-    public function getCanceledList()
+    public function getCanceledList(Request $request)
     {
         //TODO 需要处理user_id 和cancel_user_id
-        $canceledLists = Punish::where('is_canceled', 1)
-            ->paginate(config('cbs.pageNumber'));
-        $count = $this->setCountMessage('canceled');
-        return view('punish.canceled', ['canceledLists'=>$canceledLists, 'count'=>$count]);
-    }
+        $model = Punish::with('user')        
+            ->with('cancel')
+            ->where('is_canceled', 1);
 
+        if ($request->company_name) {
+            $company_id = (int)Company::where('company_name', 'like', '%'. $request->company_name .'%')->value('company_id');
+            $model->where('company_id', $company_id);
+        }     
+        $totalMoney = $model->sum('money');
 
-    public function getChargedSearch(Request $request)
-    {
-
-    }
-    public function getUnchargedSearch(Request $request)
-    {
-
-    }
-    public function getCancelSearch(Request $request)
-    {
-
+        $canceledLists = $model->paginate(config('cbs.pageNumber'));
+        return view('punish.canceled', compact('canceledLists', 'totalMoney'));
     }
 
     /**
@@ -127,7 +137,7 @@ class PunishController extends Controller
         $punish = new Punish();
         $punish->company_id = $request->company_id;
         //TODO user_id 需要处理
-        $punish->user_id = Auth::user()->user_id;
+        $punish->user_id = Auth::user()->id;
         $punish->money = $request->money;
         $punish->reason = $request->reason;
         $punish->punish_remark = $request->punish_remark;
@@ -203,19 +213,19 @@ class PunishController extends Controller
         $punishId = intval($request->punish_id);
         $cancelReason = trim(htmlspecialchars(strip_tags($request->cancel_reason)));
         //TODO cancel_user_id
-        $cancelUserId = 0;
+        $cancelUserId = Auth::user()->id;
 
         //必须有撤销原因
         if (empty($cancelReason)) {
             return response()->json(['message'=>"失败：请填写撤销原因！", 'status'=>0]);
         }
         //已缴费的项目不能撤销
-        $punish = DB::table('punish')->find($punishId);
+        $punish = Punish::find($punishId);
         if (intval($punish->is_charged) === 1 ) {
             return response()->json(['message'=>"失败：已缴费罚单不能撤销！", 'status'=>0]);
         }
 
-        if (DB::table('punish')->where('punish_id', $punishId)
+        if (Punish::where('punish_id', $punishId)
                 ->update([
                     'cancel_user_id'    =>  $cancelUserId,
                     'cancel_reason'     =>  $cancelReason,
