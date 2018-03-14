@@ -24,6 +24,7 @@ class CreateCompaniesTable extends Migration
             //是否退租
             $table->tinyInteger('is_quit')->default('0');
             $table->timestamp('quit_at')->default('0000-00-00 00:00:00');
+            $table->string('belongs_to')->default('造船');
             $table->timestamps();
         });
     }

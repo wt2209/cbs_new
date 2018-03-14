@@ -83,6 +83,7 @@ class SheetController extends Controller
             $roomId = $record->room_id;
             $tmp = [
                 'company_name' => $record->company->company_name,
+                'belongs_to' => $record->company->belongs_to,
                 'room_name' => $record->room->room_name,
                 'price' => $record->price,
             ];
@@ -166,7 +167,7 @@ class SheetController extends Controller
         //标题行 
         $titleRow = [$filename];
         //菜单第一行
-        $menuRow = ['序号', '公司名', '房间号', '开始日', '结束日', '天数', '月租金', '房费',
+        $menuRow = ['序号', '公司名','属于', '房间号', '开始日', '结束日', '天数', '月租金', '房费',
                     '上期电表数', '本期电表数', '用电量', '电费', 
                     '上期水表数', '本期水表数', '用水量', '水费', 
                     '总金额'];
@@ -180,6 +181,7 @@ class SheetController extends Controller
             $tmp = [
                 $serialNumber++,
                 $record['company_name'],
+                $record['belongs_to'],
                 $record['room_name'],
                 $record['start_day'],
                 $record['end_day'],

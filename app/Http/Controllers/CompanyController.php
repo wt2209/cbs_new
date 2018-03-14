@@ -212,6 +212,9 @@ class CompanyController extends Controller
         $company->manager = $request->manager;
         $company->manager_tel = $request->manager_tel;
         $company->company_remark = $request->company_remark;
+        //懒得查文档在$validate中验证了。。。。
+        $company->belongs_to = $request->belongs_to == '修船' ? '修船' : '造船';
+
         //开启事务
         DB::beginTransaction();
         if ($company->save()) {
@@ -255,6 +258,8 @@ class CompanyController extends Controller
             $company->manager_tel = $request->manager_tel;
             $company->company_remark = $request->company_remark;
             $company->created_at = $request->created_at;
+            //懒得查文档在$validate中验证了。。。。
+            $company->belongs_to = $request->belongs_to == '修船' ? '修船' : '造船';
             //开启事务
             DB::beginTransaction();
             if ($company->save()) {
@@ -488,7 +493,7 @@ class CompanyController extends Controller
         //标题行
         $titleRow = ['公司明细-'.date('Ymd')];
         //菜单第一行
-        $menuRow = ['序号','公司名','描述','入住时间','日常联系人','联系人电话','公司负责人','负责人电话','备注'];
+        $menuRow = ['序号','公司名','属于','描述','入住时间','日常联系人','联系人电话','公司负责人','负责人电话','备注'];
         $data = [
             $titleRow,
             $menuRow,
@@ -499,6 +504,7 @@ class CompanyController extends Controller
             $tmp = [
                 $serialNumber++,
                 $company->company_name,
+                $company->belongs_to,
                 $company->company_description,
                 substr($company->created_at,0,10),
                 $company->linkman,

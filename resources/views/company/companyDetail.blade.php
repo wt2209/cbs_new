@@ -26,6 +26,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>属于</th>
+                    <td>
+                        {{ $company->belongs_to }}
+                    </td>
+                </tr>
+                <tr>
                     <th>描述</th>
                     <td>
                         {{$company->company_description}}

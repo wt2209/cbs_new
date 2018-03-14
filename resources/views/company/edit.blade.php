@@ -31,6 +31,18 @@
                     <td></td>
                 </tr>
                 <tr>
+                    <th width="10%">属于</th>
+                    <td width="20%">
+                        <select name="belongs_to" class="form-control">
+                            <option value="造船" @if($company->belongs_to == '造船') selected @endif >造船</option>
+                            <option value="修船" @if($company->belongs_to == '修船') selected @endif>修船</option>
+                        </select>
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
                     <th>描述</th>
                     <td colspan="2" >
                         <textarea name="company_description" class="form-control" cols="30" rows="3">{{ $company->company_description }}</textarea>
