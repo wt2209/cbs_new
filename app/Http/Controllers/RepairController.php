@@ -197,6 +197,7 @@ class RepairController extends Controller
             $repair->finish_remark = $request->input('finish_remark');
             $repair->is_finished = 1;
             $repair->finished_at = date('Y-m-d H:i:s');
+            $repair->report_at = $repair->report_at;
 
             if ($repair->save()) {
                 return response()->json(['message'=>'操作成功！', 'status'=>1]);
