@@ -33,7 +33,7 @@
                     <th width="10%">楼号</th>
                     <td width="20%">
                         <input type="text" class="form-control input-sm" name="building"
-                               placeholder="例如：1， 综合楼"/>
+                               placeholder="例如：1#楼， 综合楼"/>
                     </td>
                     <td width="10%"></td>
                     <td></td>
