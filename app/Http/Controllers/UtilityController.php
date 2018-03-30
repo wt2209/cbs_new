@@ -134,6 +134,9 @@ class UtilityController extends Controller{
         }
 
         $filePath = storage_path('app/import');
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0755, true);
+        }
         $fileName = date('YmdHis').'.'.$pathInfo['extension'];
         if (move_uploaded_file($_FILES['import_file']['tmp_name'],$filePath.'/'.$fileName)) {
             $result = Excel::load($filePath.'/'.$fileName, function($reader) {})->get();
@@ -144,10 +147,10 @@ class UtilityController extends Controller{
             foreach ($sheet as $row) {
                 if (isset($roomToId[$row[0]]) && !empty($roomToId[$row[0]])) {
                     $insert[] = [
-                        'room_id'       =>intval($roomToId[$row[0]]),
-                        'electric_base'=>intval($row[1]),
-                        'water_base'    =>intval($row[2]),
-                        'u_base_remark' =>addslashes(strip_tags($row[3])),
+                        'room_id'       =>isset($row[0]) ? intval($roomToId[$row[0]]) : '',
+                        'electric_base'=>isset($row[1]) ? intval($row[1]) : '',
+                        'water_base'    =>isset($row[2]) ? intval($row[2]) : '',
+                        'u_base_remark' =>isset($row[3]) ? addslashes(strip_tags($row[3])) : '',
                         'recorder'      =>$option['recorder'],
                         'record_time'   =>$option['recordTime'],
                         'year'          =>$option['year'],
