@@ -1,6 +1,6 @@
 @extends('header')
 
-@section('title', '修改房间备注')
+@section('title', '修改房间')
 
 
 @section('css')
@@ -9,7 +9,7 @@
 @endsection
 @section('header')
     <ul class="nav nav-pills nav-small">
-        <li role="presentation" class="active"><a href="">修改房间备注</a></li>
+        <li role="presentation" class="active"><a href="">修改房间</a></li>
     </ul>
     <div id="return-btn">
         <a href="{{ url('room/index') }}"><< 返回列表页</a>
@@ -25,7 +25,15 @@
                 <tr class="no-border">
                     <th width="10%">房间号</th>
                     <td width="20%">
-                        {{ $room->room_name }}
+                    <input type="text" class="form-control" name="room_name" value="{{ $room->room_name }}">
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
+                    <th width="10%">楼号</th>
+                    <td width="20%">
+                    <input type="text" class="form-control" name="building" value="{{ $room->building }}">
                     </td>
                     <td width="10%"></td>
                     <td></td>

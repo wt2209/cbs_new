@@ -214,8 +214,9 @@ class RoomController extends Controller
     public function postUpdate(Request $request)
     {
         $roomId = intval($request->room_id);
-        $roomRemark = $request->input('room_remark');
         $data = [
+            'room_name'=>$request->room_name,
+            'building'=>$request->building,
             'room_remark'=>$request->room_remark,
             'price'=>$request->price,
             'person_number'=>$request->person_number,
