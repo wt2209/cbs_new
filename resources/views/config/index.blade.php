@@ -31,12 +31,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>水电费精度</th>
+                    <th>报表费用精度</th>
                     <td>
                         <input  class="form-control" type="text" name="precision" value="{{ $precision }}">
                     </td>
                     <td>
-                        水电费小数点后的位数
+                        费用小数点后的位数
                     </td>
                 </tr>
                 <tr>

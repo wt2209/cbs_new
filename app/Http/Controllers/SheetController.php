@@ -118,13 +118,13 @@ class SheetController extends Controller
 
             $tmp['day_number']  = $tmp['end_day'] - $tmp['start_day'] + 1;
             
-            $tmp['rent_money'] = round($tmp['price'] * $tmp['day_number'] / $lastDay, 2);
+            $tmp['rent_money'] = round($tmp['price'] * $tmp['day_number'] / $lastDay, config('cbs.precision'));
 
             $tmp['electric'] = $tmp['end_electric_base'] - $tmp['start_electric_base'];
             $tmp['water'] = $tmp['end_water_base'] - $tmp['start_water_base'];
 
-            $tmp['electric_money'] = round($tmp['electric'] * config('cbs.electricMoney'), 2);
-            $tmp['water_money'] = round($tmp['water'] * config('cbs.waterMoney'), 2);
+            $tmp['electric_money'] = round($tmp['electric'] * config('cbs.electricMoney'), config('cbs.precision'));
+            $tmp['water_money'] = round($tmp['water'] * config('cbs.waterMoney'), config('cbs.precision'));
 
             $tmp['total_money'] = $tmp['rent_money'] + $tmp['electric_money'] + $tmp['water_money'];
 
