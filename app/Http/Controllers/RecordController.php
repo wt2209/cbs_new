@@ -30,7 +30,7 @@ class RecordController extends Controller
      */
     public function getIndex()
     {
-        $records = Record::with('company')->with('room')->paginate(config('cbs.pageNumber'));
+        $records = Record::with('company')->with('room')->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
         $count = Record::count();
 
         $companies = Company::orderBy('company_name', 'asc')->get();
@@ -64,7 +64,7 @@ class RecordController extends Controller
         }
 
         $count = $model->count();
-        $records = $model->paginate(config('cbs.pageNumber'));
+        $records = $model->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
 
         $companies = Company::orderBy('company_name', 'asc')->get();
 
