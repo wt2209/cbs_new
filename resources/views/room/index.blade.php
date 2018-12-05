@@ -82,6 +82,9 @@
                                 <div class="company">
                                     {{ isset($room->company->company_name) ? $room->company->company_name : "" }}
                                 </div>
+                                <div class="room-remark">
+                                    备注：{{$room->room_remark}}
+                                </div>
                                 <div class="func">
                                     @if (isset($room->company->company_name))
                                         <button type="button" class="btn btn-danger btn-xs quit-button" company_id="{{$room->company_id}}" room_id="{{$room->room_id}}">退房</button>

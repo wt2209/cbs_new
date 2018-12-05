@@ -157,3 +157,9 @@ table tr.no-border {
   min-height:70px;
   font-weight: bold;
 }
+.room .room-content .room_remark{
+  border-top:1px #ccc solid;
+  font-size: 12px;
+  line-height: 12px;
+  height:36px;
+}
