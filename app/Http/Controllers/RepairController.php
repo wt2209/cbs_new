@@ -241,8 +241,8 @@ class RepairController extends Controller
             ->where('is_passed', 1)
             ->where('is_finished', 1)
             ->where('canceled', 0)
-            ->where('finished_at', '>=', date('Y-m-d', strtotime($year.'-'.$month.'-1')))
-            ->where('finished_at', '<', date('Y-m-d', strtotime($year.'-'.($month + 1).'-1')))
+            ->whereRaw("YEAR(finished_at) = {$year}")
+            ->whereRaw("MONTH(finished_at) = {$month}")
             ->orderBy('id','desc')
             ->get();
 
