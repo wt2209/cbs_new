@@ -149,6 +149,9 @@ return [
          */
         Maatwebsite\Excel\ExcelServiceProvider::class,
 
+        //laravel-backup
+        Spatie\Backup\BackupServiceProvider::class,
+
     ],
 
     /*
