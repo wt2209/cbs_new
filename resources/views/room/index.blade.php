@@ -162,8 +162,8 @@
                                 <tr>
                                     <th>性别</th>
                                     <td>
-                                        <label><input type="radio" name="gender" value="1" checked>男</label>&nbsp;&nbsp;&nbsp;
-                                        <label><input type="radio" name="gender" value="2">女</label>
+                                        <label style="width: 40px;"><input type="radio" name="gender" value="1" checked>&nbsp;男</label>&nbsp;&nbsp;&nbsp;
+                                        <label style="width: 40px;"><input type="radio" name="gender" value="2">&nbsp;女</label>
                                     </td>
                                 </tr>
                                 <tr>
