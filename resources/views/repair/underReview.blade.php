@@ -16,9 +16,17 @@
 @endsection
 @section('content')
     <div class="table-responsive">
+        <div class="function-group">
+            <button class="btn btn-success" id="patch-review">批量审核通过</button>
+        </div>
         <table class="table table-bordered table-hover table-condensed">
             <thead>
             <tr class="active">
+                <th style="text-align: center; width:40px;">
+                    <label>
+                    <input type="checkbox" id="review-items-parent">
+                    </label>
+                </th>
                 <th>位置/房间号</th>
                 <th>报修内容</th>
                 <th>报修人</th>
@@ -29,6 +37,11 @@
             @foreach ($underReviews as $underReview)
                 {{--正在使用--}}
                 <tr>
+                    <td style="text-align: center;">
+                        <label>
+                            <input type="checkbox" data-id="{{$underReview->id}}" class="review-items">
+                        </label>
+                    </td>
                     <td>{{ $underReview->location }}</td>
                     <td>{{ $underReview->content }}</td>
                     <td>{{ $underReview->name }}</td>
@@ -53,7 +66,35 @@
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
     <script>
+        $(function () {
+            // 全选 反选
+            $('#review-items-parent').click(function () {
+                if (this.checked) {
+                    $(".review-items").prop("checked", true);
+                } else {
+                    $(".review-items").prop("checked", false);
+                }
+            })
 
+            // 批量审核
+            $('#patch-review').click(function () {
+                ids = [];
+                $('.review-items').each(function () {
+                    if (this.checked) {
+                        ids.push(this.dataset.id);
+                    }
+                })
 
+                maskShow();
+                $.post('{{url('repair/patch-review')}}', {ids}, function(e){
+                    maskHide();
+                    popdown({'message':e.message, 'status': e.status, 'callback':function(){
+                            if (e.status) {
+                                location.reload(true);
+                            }
+                        }});
+                }, 'json');
+            })
+        })
     </script>
 @endsection

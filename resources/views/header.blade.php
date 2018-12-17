@@ -4,8 +4,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>承包商公寓管理 - @yield('title')</title>
     <link rel="stylesheet" href="{{ asset('/bootstrap-3.3.5/css/bootstrap.css') }}"/>
-    @yield('css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <script src="{{ asset('js/jquery-1.11.3.js') }}"></script>
+    @yield('css')
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
 </head>
 <body>
 <div id="header">

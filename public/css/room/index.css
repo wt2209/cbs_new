@@ -45,10 +45,17 @@ table tr.no-border {
   table tr.no-border th {
     border-bottom: none;
     border-top: none; }
-
+table tr label, table th label{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 .navbar {
   margin-bottom: 8px; }
-
+.function-group{
+  margin:10px;
+}
 .function-area {
   margin-bottom: 8px; }
 
@@ -157,9 +164,8 @@ table tr.no-border {
   min-height:70px;
   font-weight: bold;
 }
-.room .room-content .room_remark{
-  border-top:1px #ccc solid;
+.room .room-remark{
+  border-top:1px #7ec4e6 solid;
   font-size: 12px;
-  line-height: 12px;
   height:36px;
 }

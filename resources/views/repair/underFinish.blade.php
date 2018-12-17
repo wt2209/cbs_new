@@ -23,9 +23,13 @@
 @endsection
 @section('content')
     <div class="table-responsive">
+        <div class="function-group">
+            <button class="btn btn-success" id="patch-finish">批量完工</button>
+        </div>
         <table id="table" class="table table-bordered table-hover table-condensed" print-url="{{ url('repair/print/') }}">
             <thead>
             <tr class="hidden" id="print-title">
+                <td class="no-print"  style="width: 40px;"></td>
                 <td>位置/房间号</td>
                 <td>报修内容</td>
                 <td>报修人</td>
@@ -37,6 +41,11 @@
                 <td class="no-print">操作</td>
             </tr>
             <tr class="active" id="display-title">
+                <th class="no-print" style="width: 40px;text-align: center;">
+                    <label>
+                        <input type="checkbox" id="finish-items-parent">
+                    </label>
+                </th>
                 <th>位置/房间号</th>
                 <th>报修内容</th>
                 <th>报修人</th>
@@ -51,6 +60,11 @@
             @foreach ($items as $item)
                 {{--正在使用--}}
                 <tr id="print-{{$item->id}}" class="no-print">
+                    <td style="text-align: center;" class="no-print">
+                        <label>
+                            <input type="checkbox" data-id="{{$item->id}}" class="finish-items">
+                        </label>
+                    </td>
                     <td>{{ $item->location }}</td>
                     <td>{{ $item->content }}</td>
                     <td>{{ $item->name }}</td>
@@ -101,8 +115,39 @@
     <script>
         ajaxDelete('{{ url('repair/cancel') }}')
 
-        //打印
         $(function(){
+            // 全选 反选
+            $('#finish-items-parent').click(function () {
+                if (this.checked) {
+                    $(".finish-items").prop("checked", true);
+                } else {
+                    $(".finish-items").prop("checked", false);
+                }
+            });
+
+            // 批量完工
+            $('#patch-finish').click(function () {
+                ids = [];
+                $('.finish-items').each(function () {
+                    if (this.checked) {
+                        ids.push(this.dataset.id);
+                    }
+                })
+                console.log(ids);
+
+                maskShow();
+                $.post('{{url('repair/patch-finish')}}', {ids}, function(e){
+                    maskHide();
+                    popdown({'message':e.message, 'status': e.status, 'callback':function(){
+                            if (e.status) {
+                                location.reload(true);
+                            }
+                        }});
+                }, 'json');
+            })
+
+
+            //打印
             $('.print-button').click(function(){
                 var displayTitle = $('#display-title');
                 var printTitle = $('#print-title');

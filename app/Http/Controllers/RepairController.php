@@ -99,7 +99,26 @@ class RepairController extends Controller
         return view('repair.underReview', compact('underReviews'));
     }
 
-
+    /**
+     * 批量审核通过
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postPatchReview(Request $request) {
+        $ids = $request->ids;
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message'=>'失败：请至少选择一项！', 'status'=>0]);
+        }
+        Repair::whereIn('id', $ids)
+            ->where('is_reviewed', 0)
+            ->update([
+                'is_reviewed' => 1,
+                'reviewer' => Auth::user()->user_name,
+                'is_passed' => 1,
+                'reviewed_at' => date('Y-m-d H:i:s'),
+            ]);
+        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+    }
 
     /**
      * 审核
@@ -179,6 +198,20 @@ class RepairController extends Controller
         return view('repair.finish', compact('item'));
     }
 
+
+    public function postPatchFinish(Request $request) {
+        $ids = $request->ids;
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message'=>'失败：请至少选择一项！', 'status'=>0]);
+        }
+        Repair::whereIn('id', $ids)
+            ->where('is_finished', 0)
+            ->update([
+                'is_finished' => 1,
+                'finished_at' => date('Y-m-d H:i:s'),
+            ]);
+        return response()->json(['message'=>'操作成功！', 'status'=>1]);
+    }
     /**
      * 单个项目完工，保存结果
      * @param Request $request
@@ -197,7 +230,6 @@ class RepairController extends Controller
             $repair->finish_remark = $request->input('finish_remark');
             $repair->is_finished = 1;
             $repair->finished_at = date('Y-m-d H:i:s');
-            $repair->report_at = $repair->report_at;
 
             if ($repair->save()) {
                 return response()->json(['message'=>'操作成功！', 'status'=>1]);
