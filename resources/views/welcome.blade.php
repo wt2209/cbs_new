@@ -40,6 +40,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4 col-xs-4">
+            <div class="info-box info-box-warning"  style="min-height: 96px;">
+                <div class="info-box-content">
+                    <span class="info-box-text">本月已维修量</span>
+                    <br>
+                    <span class="info-box-text">{{$repair_current_count}}</span>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
             @foreach($detail as $typeName => $type)

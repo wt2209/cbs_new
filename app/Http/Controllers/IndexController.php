@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Company;
 use App\Model\Record;
+use App\Model\Repair;
 use App\Model\Room;
 use App\Model\RoomType;
 use Illuminate\Http\Request;
@@ -31,10 +32,12 @@ class IndexController extends Controller
 
     public function getWelcome()
     {
-        $count['居住用房']['1号楼'] = 10;
-
         $company_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`company_id`)"));
         $room_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`room_id`)"));
+        $repair_current_count = Repair::where('is_finished', 1)
+            ->where(DB::raw('YEAR(finished_at)'), date('Y'))
+            ->where(DB::raw('MONTH(finished_at)'), date('m'))
+            ->count();
         $types = RoomType::lists('type_name', 'id');
         $buildings = Room::distinct('building')->lists('building');
 
@@ -53,6 +56,6 @@ class IndexController extends Controller
             }
         }
 
-        return view('welcome', compact('detail', 'company_total_count', 'room_total_count'));
+        return view('welcome', compact('detail', 'company_total_count', 'room_total_count', 'repair_current_count'));
     }
 }
