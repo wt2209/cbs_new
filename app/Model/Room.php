@@ -30,4 +30,9 @@ class Room extends Model
     {
         return $this->belongsTo('App\Model\RoomType', 'type_id', 'id');
     }
+
+    public function records()
+    {
+        return $this->hasMany('App\Model\Record');
+    }
 }
