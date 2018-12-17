@@ -162,11 +162,20 @@
         <div class="list_item">
             <div id="left_main_nav">
                 <ul>
+                    <li class="left_back">备份</li>
                     <li class="left_back">配置项</li>
                     <li class="left_back">用户与权限</li>
                 </ul>
             </div>
             <div id="right_main_nav">
+                <div class="list_title">
+                    <span>备份</span>
+                    <ul class="list_detail">
+                        <li>
+                            <a href="{{route('backup.index')}}" target="iframe">备份</a>
+                        </li>
+                    </ul>
+                </div>
                 <div class="list_title">
                     <span>配置项</span>
                     <ul class="list_detail">

@@ -65,3 +65,7 @@ Route::controller('sheet', 'SheetController');
 
 //维修管理
 Route::controller('repair', 'RepairController');
+
+// 备份
+Route::get('backup', 'BackupController@index')->name('backup.index');
+Route::get('backup/download', 'BackupController@download')->name('backup.download');
