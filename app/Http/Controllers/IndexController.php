@@ -34,10 +34,12 @@ class IndexController extends Controller
     {
         $company_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`company_id`)"));
         $room_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`room_id`)"));
+        $repairing_count = Repair::where('is_printed', 1)->where('is_finished', 1)->count();
         $repair_current_count = Repair::where('is_finished', 1)
             ->where(DB::raw('YEAR(finished_at)'), date('Y'))
             ->where(DB::raw('MONTH(finished_at)'), date('m'))
             ->count();
+
         $types = RoomType::lists('type_name', 'id');
         $buildings = Room::distinct('building')->lists('building');
 
@@ -56,6 +58,12 @@ class IndexController extends Controller
             }
         }
 
-        return view('welcome', compact('detail', 'company_total_count', 'room_total_count', 'repair_current_count'));
+        return view('welcome', compact(
+            'detail',
+            'company_total_count',
+            'room_total_count',
+            'repair_current_count',
+            'repairing_count'
+        ));
     }
 }

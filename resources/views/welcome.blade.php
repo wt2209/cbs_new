@@ -22,7 +22,7 @@
         {{--<h1 style="text-align: center;font-size: 54px;">承包商公寓管理系统</h1>--}}
     </div>
     <div class="row" style="margin-bottom: 20px;">
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-3 col-xs-3">
             <div class="info-box info-box-warning"  style="min-height: 96px;">
                 <div class="info-box-content">
                     <span class="info-box-text">当前公司总数</span>
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-3 col-xs-3">
             <div class="info-box info-box-warning" style="min-height: 96px;">
                 <div class="info-box-content">
                     <span class="info-box-text">已用房间总数</span>
@@ -40,7 +40,16 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-3 col-xs-3">
+            <div class="info-box info-box-warning"  style="min-height: 96px;">
+                <div class="info-box-content">
+                    <span class="info-box-text">正在维修</span>
+                    <br>
+                    <span class="info-box-text">{{$repairing_count}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-3">
             <div class="info-box info-box-warning"  style="min-height: 96px;">
                 <div class="info-box-content">
                     <span class="info-box-text">本月已维修量</span>
