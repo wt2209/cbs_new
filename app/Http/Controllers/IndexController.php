@@ -34,7 +34,7 @@ class IndexController extends Controller
     {
         $company_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`company_id`)"));
         $room_total_count = Record::where('in_use', 1)->count(DB::raw("distinct(`room_id`)"));
-        $repairing_count = Repair::where('is_printed', 1)->where('is_finished', 0)->count();
+        $repairing_count = Repair::where('is_printed', 1)->where('is_passed', 1)->where('is_finished', 0)->count();
         $repair_current_count = Repair::where('is_finished', 1)
             ->where(DB::raw('YEAR(finished_at)'), date('Y'))
             ->where(DB::raw('MONTH(finished_at)'), date('m'))
