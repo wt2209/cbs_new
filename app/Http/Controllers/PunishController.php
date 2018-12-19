@@ -36,7 +36,7 @@ class PunishController extends Controller
 
         $totalMoney = $model->sum('money');
 
-        $chargedLists = $model->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
+        $chargedLists = $model->orderBy('punish_id', 'desc')->paginate(config('cbs.pageNumber'));
        
         return view('punish.charged', compact('chargedLists', 'totalMoney'));
     }
@@ -58,7 +58,7 @@ class PunishController extends Controller
         }
         $totalMoney = $model->sum('money');
         
-        $unchargedLists = $model->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
+        $unchargedLists = $model->orderBy('punish_id', 'desc')->paginate(config('cbs.pageNumber'));
         return view('punish.uncharged', compact('unchargedLists', 'totalMoney'));
     }
 
@@ -79,7 +79,7 @@ class PunishController extends Controller
         }     
         $totalMoney = $model->sum('money');
 
-        $canceledLists = $model->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
+        $canceledLists = $model->orderBy('punish_id', 'desc')->paginate(config('cbs.pageNumber'));
         return view('punish.canceled', compact('canceledLists', 'totalMoney'));
     }
 
