@@ -36,7 +36,7 @@
                 <div class="info-box-content">
                     <span class="info-box-text">已用房间总数</span>
                     <br>
-                    <span class="info-box-text">{{$company_total_count}}</span>
+                    <span class="info-box-text">{{$room_total_count}}</span>
                 </div>
             </div>
         </div>
@@ -79,12 +79,6 @@
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-                    <div class="panel-footer">
-                        <p style="margin: 0;">
-                            当前公司总数：{{array_sum(array_column($type, 'company_count'))}}，
-                            已用房间总数：{{array_sum(array_column($type, 'room_count'))}}
-                        </p>
                     </div>
                 </div>
             </div>
