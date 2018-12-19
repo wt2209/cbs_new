@@ -35,7 +35,7 @@
                     {{round((\Storage::disk('backup')->size($file)) / 1024 / 1024, 2)}} M
                 </td>
                 <td>
-                    <a href="{{route('backup.download', ['filename' => $file])}}" class="btn btn-success btn-xs">下载</a>
+                    <a target="_blank" href="{{route('backup.download', ['filename' => $file])}}" class="btn btn-success btn-xs">下载</a>
                 </td>
             </tr>
         @endforeach
