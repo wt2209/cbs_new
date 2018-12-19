@@ -53,8 +53,10 @@ class IndexController extends Controller
 
                 $roomCount = Record::where('in_use', 1)->whereIn('room_id', $roomIds)->count(DB::raw("distinct(`room_id`)"));
                 $companyCount = Record::where('in_use', 1)->whereIn('room_id', $roomIds)->count(DB::raw("distinct(`company_id`)"));
-                $detail[$type][$building]['room_count'] = $roomCount;
-                $detail[$type][$building]['company_count'] = $companyCount;
+                if ($roomCount > 0 || $companyCount > 0) {
+                    $detail[$type][$building]['room_count'] = $roomCount;
+                    $detail[$type][$building]['company_count'] = $companyCount;
+                }
             }
         }
 

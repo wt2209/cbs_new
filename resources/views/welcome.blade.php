@@ -61,6 +61,7 @@
     </div>
     <div class="row">
             @foreach($detail as $typeName => $type)
+            @if ($type)
             <div class="col-md-4 col-xs-4">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
@@ -87,6 +88,7 @@
                     </div>
                 </div>
             </div>
+            @endif
             @endforeach
     </div>
 </div>

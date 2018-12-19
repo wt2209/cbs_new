@@ -12,6 +12,7 @@ class BackupController extends Controller
     public function index()
     {
         $files = Storage::disk($this->disk)->files();
+        rsort($files);
         return view('backup.index', compact('files'));
     }
 
