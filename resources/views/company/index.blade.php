@@ -2,7 +2,6 @@
 
 @section('title', '承包商公司明细')
 
-
 @section('css')
     <link rel="stylesheet" href="{{ asset('/css/company/index.css') }}"/>
 @endsection
@@ -70,40 +69,16 @@
                     </p>
                 </div>
                 <div class="down">
+                    <p><strong>属于：</strong><span>{{$company['belongs_to']}}</span></p>
                     <p><strong>入住时间：</strong><span>{{substr($company['created_at'], 0, 10)}}</span></p>
-                    {{--<p class="all-rooms">
-                        @if (isset($rooms[$company->company_id]))
-                            @if (count($rooms[$company->company_id]) <= 8)
-                                @foreach($rooms[$company->company_id] as $room)
-                                    <a href="" class="company-room">{{ $room }}</a>
-                                @endforeach
-                            @else
-                                @for($i=0; $i<8; $i++)
-                                    <a href="" class="company-room">{{ $rooms[$company->company_id][$i] }}</a>
-                                @endfor
-                                <a href="" class="more">更多>></a>
-                            @endif
-                        @endif
-                    </p>--}}
                     <div class="all-rooms">
                         @if(count($company['count'])>0)
                         <div class="count">
                             @foreach($company['count'] as $type => $count)
-                                <!-- <p class="room-type">{{ $type }}：</p> -->
-                                <!-- <p class="count"><span style='color:red'>{{$count}}</span>套</p> -->
                                 <p>{{$type}}：<span style='color:red'>{{$count}}</span>套</p>
                             @endforeach
-                    </div>
+                        </div>
                         @endif
-                        {{--@if ($company->rooms)--}}
-                            {{--房间多于8个--}}
-                            {{--@foreach($company->rooms as $key=>$room)--}}
-                                {{--@if ($key < 8)--}}
-                                    {{--<a href="javascript:;" class="company-room">{{ $room->room_name }}</a>--}}
-                                {{--@endif--}}
-                            {{--@endforeach--}}
-                            {{--<a href="{{ url('company/company-detail/'.$company->company_id) }}" class="more" >详细>></a>--}}
-                        {{--@endif--}}
                     </div>
                     <strong>备注：</strong>
                     <p class="company-remark">{{ $company['company_remark'] }}</p>
@@ -151,7 +126,6 @@
             @endforeach
         @endif
     </p>
-    {{--<p>共有 {{ $count['company'] }} 个公司</p>--}}
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

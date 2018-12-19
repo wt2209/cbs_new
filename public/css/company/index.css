@@ -194,19 +194,23 @@ table tr.no-border {
         height: 50px;
         font-size: 11px; }
       .company .company-content .down .all-rooms {
-        height: 54px;
+        height: 38px;
       overflow: hidden;
       margin:3px 0;}
+    .company .company-content .down strong {
+        display:inline-block;
+        width:70px;
+    }
 
 
       .company .company-content .down .all-rooms .count{
-        line-height: 18px;
+        line-height: 14px;
         margin:0;
         float: left;
       }
       .company .company-content .down .all-rooms .count p{
         display: inline-block;
-        padding:5px 10px;
+        padding:2px 10px;
         width:120px;
       }
 
