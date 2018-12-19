@@ -83,7 +83,7 @@ class SheetController extends Controller
             $roomId = $record->room_id;
             $tmp = [
                 'company_name' => $record->company->company_name,
-                'belongs_to' => $record->company->belongs_to,
+                'belongs_to' => $record->belongs_to ? $record->belongs_to : $record->company->belongs_to,
                 'room_name' => $record->room->room_name,
                 'price' => $record->price,
             ];

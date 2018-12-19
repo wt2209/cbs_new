@@ -45,7 +45,7 @@ class RoomController extends Controller
 
         $roomsWithFloor = $this->roomsGroupByFloor($rooms);
 
-        $companies = Company::select('company_id', 'company_name')->orderBy('company_name', 'asc')->get();
+        $companies = Company::select('company_id', 'company_name', 'belongs_to')->orderBy('company_name', 'asc')->get();
         return view('room.index', compact('structure', 'roomsWithFloor', 'currentBuilding', 'currentType', 'count', 'companies'));
     }
 

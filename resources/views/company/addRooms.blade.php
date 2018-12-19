@@ -19,7 +19,7 @@
     </ul>
     <div id="return-btn">
         <a href="{{ url('company/index') }}"><< 返回列表页</a>
-        <a href="{{ url('company/add-rooms/'.$company_id) }}" class="refresh"></a>
+        <a href="{{ url('company/add-rooms/'.$company->company_id) }}" class="refresh"></a>
     </div>
     <nav class="navbar navbar-default navbar-small">
         <div class="container-fluid">
@@ -34,7 +34,7 @@
     <div class="table-responsive">
         <form class="form-inline">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-            <input type="hidden" name="company_id" value="{{ $company_id }}">
+            <input type="hidden" name="company_id" value="{{ $company->company_id }}">
             <div id="data-container">
                 @foreach ($emptyRooms as $typeName => $rooms)
                     <br>
@@ -48,6 +48,12 @@
                                         <input type="hidden" class="room" value="{{$room['room_id']}}">
                                     </label>&nbsp;&nbsp;&nbsp;
                                 </div>
+                                <div class="checkbox room-name">
+                                    <select name="belongs_to" class="form-control belongs-to">
+                                        <option value="造船" @if($company->belongs_to == '造船') selected @endif>造船</option>
+                                        <option value="修船" @if($company->belongs_to == '修船') selected @endif>修船</option>
+                                    </select>&nbsp;&nbsp;&nbsp;
+                                </div>
                                 <div class="form-group electric-base">
                                     <input type="text" class="form-control electric" name="electric[{{$room['room_id']}}]" placeholder="电表底数">
                                 </div>
@@ -55,7 +61,6 @@
                                     <input type="text" class="form-control water" name="water[{{$room['room_id']}}]" placeholder="水表底数">
                                 </div>
                                 <div class="form-group gender">
-                                    &nbsp;&nbsp;&nbsp;
                                     <label class="no-bold"><input type="radio" value="1" name="gender[{{$room['room_id']}}]" checked>男 </label>
                                     <label class="no-bold"><input type="radio" value="2" name="gender[{{$room['room_id']}}]">女</label>
                                 </div>
@@ -95,8 +100,10 @@
 
                         var electric = self.find('.electric').val();
                         electric = electric == '' ? 0 : electric;
+
+                        var belongsTo = self.find('.belongs-to').val();
                     
-                        rooms += roomId+'_'+gender+'_'+electric+'_'+water+'|';
+                        rooms += roomId+'_'+gender+'_'+electric+'_'+water+'_'+belongsTo+'|';
                     }
                 })
                 

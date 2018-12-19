@@ -77,6 +77,10 @@ class RecordController extends Controller
     public function getEdit($id)
     {
         $record = Record::find((int) $id);
+        if (!$record->belongs_to) {
+            $record->belongs_to = $record->company->belongs_to;
+            $record->save();
+        }
 
         return view('record.edit', compact('record'));
     }
@@ -87,6 +91,7 @@ class RecordController extends Controller
     public function postUpdate(Request $request)
     {
         $record = Record::find($request->id);
+        $record->belongs_to = $request->belongs_to;
         $record->price = $request->price;
         $record->enter_electric_base = $request->enter_electric_base;
         $record->enter_water_base = $request->enter_water_base;
@@ -115,6 +120,7 @@ class RecordController extends Controller
             $gender = (int) $tmp[1];
             $enterElectricBase = (int) $tmp[2];
             $enterWaterBase = (int) $tmp[3];
+            $belongsTo = $tmp[4] == "修船" ? "修船" : "造船";
             $data = [
                 'room_id' => $roomId,
                 'company_id' => $companyId,
@@ -122,6 +128,7 @@ class RecordController extends Controller
                 'enter_electric_base' => $enterElectricBase,
                 'enter_water_base' => $enterWaterBase,
                 'entered_at' => date('Y-m-d H:i:s'),
+                'belongs_to' => $belongsTo,
             ];
 
             $this->addOneRecord($data);
@@ -181,6 +188,7 @@ class RecordController extends Controller
             'enter_electric_base' => $request->enter_electric_base,
             'enter_water_base' => $request->enter_water_base,
             'entered_at' => $request->entered_at ? $request->entered_at : date('Y-m-d H:i:s'),
+            'belongs_to' => $request->belongs_to == "修船" ? "修船" : "造船",
         ];
         if ($this->addOneRecord($data)){
             return response()->json(['message'=>'操作成功！', 'status'=>1]);
@@ -308,7 +316,7 @@ class RecordController extends Controller
         //标题行
         $titleRow = ['公司入住记录-'.date('Ymd')];
         //菜单第一行
-        $menuRow = ['序号','公司名','房间号','性别','月租金','入住时间','退房时间','入住时电表','入住时水表', '退房时电表', '退房时水表'];
+        $menuRow = ['序号','公司名','房间号','属于','性别','月租金','入住时间','退房时间','入住时电表','入住时水表', '退房时电表', '退房时水表'];
         $data = [
             $titleRow,
             $menuRow,
@@ -320,6 +328,7 @@ class RecordController extends Controller
                 $serialNumber++,
                 $record->company->company_name,
                 $record->room->room_name,
+                $record->belongs_to ? $record->belongs_to : $record->company->belongs_to,
                 $record->gender,
                 $record->price,
                 $record->entered_at,

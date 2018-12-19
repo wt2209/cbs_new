@@ -151,7 +151,7 @@ class CompanyController extends Controller
         }
         //导出文件
         if ($request->is_export == 1) {
-            $companies = $company->get();
+            $companies = Company::get();
             $this->exportFile($companies);
             return response()->redirectTo('company/index');
         }
@@ -283,9 +283,10 @@ class CompanyController extends Controller
      */
     public function getAddRooms($companyId)
     {
+        $company = Company::findOrFail($companyId);
         $emptyRooms = $this->getEmptyRoomsGroupByType();
 
-        return view('company.addRooms',['company_id'=>$companyId, 'emptyRooms'=>$emptyRooms]);
+        return view('company.addRooms', compact('company', 'emptyRooms'));
     }
 
     /**
@@ -301,7 +302,7 @@ class CompanyController extends Controller
 
      /**
      * 获取空房间
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      */
     private function getEmptyRoomsGroupByType()
     {
@@ -493,7 +494,7 @@ class CompanyController extends Controller
         //标题行
         $titleRow = ['公司明细-'.date('Ymd')];
         //菜单第一行
-        $menuRow = ['序号','公司名','属于','描述','入住时间','日常联系人','联系人电话','公司负责人','负责人电话','备注'];
+        $menuRow = ['序号','公司名','属于','描述','入住时间','日常联系人','联系人电话','公司负责人','负责人电话','备注',"退租时间"];
         $data = [
             $titleRow,
             $menuRow,
@@ -512,6 +513,7 @@ class CompanyController extends Controller
                 $company->manager,
                 $company->manager_tel,
                 $company->company_remark,
+                $company->quit_at,
             ];
             $data[] = $tmp;
         }

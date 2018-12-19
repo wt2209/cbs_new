@@ -58,6 +58,7 @@
             <tr class="active">
                 <th>公司名</th>
                 <th>房间号</th>
+                <th>属于</th>
                 <th>性别</th>
                 <th>月租金</th>
                 <th>入住时间</th>
@@ -74,6 +75,7 @@
                 <tr>
                     <td>{{ $record->company->company_name }}</td>
                     <td>{{ $record->room->room_name }}</td>
+                    <td>{{ $record->belongs_to ? $record->belongs_to : $record->company->belongs_to }}</td>
                     <td>{{ $record->gender }}</td>
                     <td>{{ $record->price }}</td>
                     <td>{{ $record->entered_at }}</td>

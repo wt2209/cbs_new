@@ -39,6 +39,17 @@
                     <td></td>
                 </tr>
                 <tr class="no-border">
+                    <th width="10%">属于</th>
+                    <td width="20%">
+                        <select name="belongs_to" class="form-control">
+                            <option value="造船" @if ($record->belongs_to == '造船')selected @endif>造船</option>
+                            <option value="修船" @if ($record->belongs_to == '修船')selected @endif>修船</option>
+                        </select>
+                    </td>
+                    <td width="10%"></td>
+                    <td></td>
+                </tr>
+                <tr class="no-border">
                     <th width="10%">月租金</th>
                     <td width="20%">
                         <input type="text" class="form-control" name="price" value="{{ $record->price }}">

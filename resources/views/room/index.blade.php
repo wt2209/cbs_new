@@ -139,12 +139,31 @@
                                 <tr>
                                     <th>公司名称</th>
                                     <td>
-                                        <select name="company_id" class="form-control">
+                                        <select name="company_id" class="form-control" id="company_name">
                                             <option value="0">选择公司</option>
                                             @foreach($companies as $company)
                                                 <option value="{{ $company->company_id }}">{{ $company->company_name }}</option>
                                             @endforeach
                                         </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>属于</th>
+                                    <td>
+                                        <select name="belongs_to" id="belongs_to" class="form-control">
+                                            <option value="造船">造船</option>
+                                            <option value="修船">修船</option>
+                                        </select>
+                                        <script>
+                                            var belongs = {};
+                                            @foreach($companies as $company)
+                                                belongs['{{$company->company_id}}'] = '{{$company->belongs_to}}';
+                                            @endforeach
+                                            $('#company_name').change(function () {
+                                                var value = belongs[$(this).val()];
+                                                $('#belongs_to').val(value);
+                                            })
+                                        </script>
                                     </td>
                                 </tr>
                                 <tr>
