@@ -25,9 +25,12 @@ class LoginController extends Controller
                 Auth::login($user);
                 return redirect()->to('/');
             }
+            $error = '密码错误';
+        } else {
+            $error = '用户名不存在';
         }
-        return view('auth.login', ['message'=>'错误：用户名或密码错误！']);
-
+        $request->flashOnly('user_name');
+        return view('auth.login')->withErrors(['user_name'=>$error]);
     }
     public function getLogout()
     {
