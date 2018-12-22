@@ -106,7 +106,7 @@
     </div>
 @endsection
 @section('bottom')
-
+    <p>共有 {{count($items)}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/js/jquery.print.min.js') }}"></script>

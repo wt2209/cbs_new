@@ -31,11 +31,9 @@ class RecordController extends Controller
     public function getIndex()
     {
         $records = Record::with('company')->with('room')->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
-        $count = Record::count();
-
         $companies = Company::orderBy('company_name', 'asc')->get();
 
-        return view('record.index', compact('records', 'companies', 'count'));
+        return view('record.index', compact('records', 'companies'));
     }
 
     /**
@@ -43,16 +41,24 @@ class RecordController extends Controller
      */
     public function getSearch(Request $request)
     {
-        $companyId = $request->company_id;
-        $inUse = $request->in_use;
+        $companyId = (int)$request->company_id;
+        $room = $request->room;
+        $inUse = (int)$request->in_use;
 
-        if ($companyId == 0) {
-            $model = Record::where('company_id', '>', 0);
-        } else {
+        $model = Record::with('company', 'room');
+
+        if ($companyId !== 0) {
             $model = Record::where('company_id', $companyId);
         }
-        
-        if ($inUse == 1 || $inUse == 0) {
+
+        if ($room) {
+            $model->whereHas('room', function ($query) use ($room) {
+                $query->where('room_name', $room);
+            });
+        }
+
+        // [0,1]表示正在使用或已经退房
+        if (in_array($inUse, [0, 1])) {
             $model->where('in_use', $inUse);
         }
 
@@ -60,15 +66,12 @@ class RecordController extends Controller
         if ($request->is_export == 1) {
             $records = $model->get();
             $this->exportFile($records);
-            return response()->redirectTo('record/index');
+            return response()->redirectTo('record/index')->withInput();
         }
 
-        $count = $model->count();
         $records = $model->orderBy('id', 'desc')->paginate(config('cbs.pageNumber'));
-
         $companies = Company::orderBy('company_name', 'asc')->get();
-
-        return view('record.index', compact('records', 'companies', 'count'));
+        return view('record.index', compact('records', 'companies'));
     }
 
     /**

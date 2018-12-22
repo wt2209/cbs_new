@@ -10,9 +10,30 @@
     <div id="return-btn">
         <a href="" class="refresh"></a>
     </div>
-    {{--    <div class="function-area">
-
-        </div>--}}
+    <nav class="navbar navbar-default navbar-small">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <form class="navbar-form navbar-left" role="search" method="get" action="{{ url('repair/canceled') }}">
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="{{isset($_GET['location']) ? $_GET['location'] : ''}}" name="location" placeholder="位置/房间号">&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <button type="submit" class="btn btn-primary">搜索</button>&nbsp;&nbsp;或&nbsp;
+                    <button class="btn btn-info btn-sm export">导出到文件</button>
+                    <script>
+                        $('.export').click(function(){
+                            var sParam = 'is_export=1&'+$('form.navbar-form').serialize();
+                            var sUrl = '{{ url('repair/canceled') }}' + '?' + sParam;
+                            maskShow();
+                            window.location = sUrl;
+                            setTimeout(maskHide,2000);
+                            return false;
+                        })
+                    </script>
+                </form>
+            </div>
+        </div>
+    </nav>
 @endsection
 @section('content')
     <div class="table-responsive">
@@ -40,19 +61,18 @@
                 </tr>
             @endforeach
         </table>
+        {!! $items->appends([
+              'location'=>isset($_GET['location']) ? $_GET['location'] : '',
+          ])->render() !!}
     </div>
 @endsection
 @section('modal')
 
 @endsection
 @section('bottom')
-
+    <p>共有 {{$items->total()}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
-    <script>
-
-
-    </script>
 @endsection

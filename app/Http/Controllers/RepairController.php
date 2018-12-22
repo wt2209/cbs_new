@@ -265,54 +265,92 @@ class RepairController extends Controller
     public function getFinished(Request $request)
     {
         $yearMonth = $request->input('year_month');
-        $arr = explode('-', $yearMonth);
-        $year = (isset($arr[0]) && !empty($arr[0])) ? (int) $arr[0] : date('Y');
-        $month = (isset($arr[1]) && !empty($arr[1])) ? (int) $arr[1] : date('m');
+        $location = $request->location;
+        if ($yearMonth) {
+            $arr = explode('-', $yearMonth);
+            if (count($arr) === 2) {
+                $year = (isset($arr[0]) && !empty($arr[0])) ? (int) $arr[0] : date('Y');
+                $month = (isset($arr[1]) && !empty($arr[1])) ? (int) $arr[1] : date('m');
+            }
+        }
 
-        $items = Repair::where('is_reviewed', 1)
+        $model = Repair::where('is_reviewed', 1)
             ->where('is_passed', 1)
             ->where('is_finished', 1)
-            ->where('canceled', 0)
-            ->whereRaw("YEAR(finished_at) = {$year}")
-            ->whereRaw("MONTH(finished_at) = {$month}")
-            ->orderBy('id','desc')
-            ->get();
+            ->where('canceled', 0);
+
+        if (isset($year)) {
+            $model->whereRaw("YEAR(finished_at) = {$year}");
+        }
+        if (isset($month)) {
+            $model->whereRaw("MONTH(finished_at) = {$month}");
+        }
+        if ($location) {
+            $model->where('location', 'like', "%".$location.'%');
+        }
+        $model->orderBy('id','desc');
 
         //导出文件
         if ($request->input('is_export') == 1) {
-            $this->exportFile($items);
+            $this->exportFile($model->get());
             return response()->redirectTo('repair/finished');
         }
+
+        $items = $model->paginate(config('cbs.pageNumber'));
 
         return view('repair.finished', compact(['items', 'year', 'month']));
     }
 
     /**
      * 未通过项目
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getUnpassed()
+    public function getUnpassed(Request $request)
     {
-        $items = Repair::where('is_reviewed', 1)
-            ->where('is_passed', 0)
-            ->orderBy('id','desc')
-            ->get();
+        $location = $request->location;
 
+        $model = Repair::where('is_reviewed', 1)->where('is_passed', 0);
+
+        if ($location) {
+            $model->where('location', 'like', '%'.$location.'%');
+        }
+        $model->orderBy('id','desc');
+
+        //导出文件
+        if ($request->input('is_export') == 1) {
+            $this->exportUnpassedFile($model->get());
+            return response()->redirectTo('repair/finished');
+        }
+
+        $items = $model->paginate(config('cbs.pageNumber'));
         return view('repair.unpassed', compact('items'));
     }
 
     /**
      * 已取消项目
+     * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getCanceled()
+    public function getCanceled(Request $request)
     {
-        $items = Repair::where('is_reviewed', 1)
-            ->where('is_passed', 1)
-            ->where('canceled', 1)
-            ->orderBy('id','desc')
-            ->get();
+        $location = $request->location;
 
+        $model = Repair::where('is_reviewed', 1)
+            ->where('is_passed', 1)
+            ->where('canceled', 1);
+        if ($location) {
+            $model->where('location', 'like', '%'.$location.'%');
+        }
+        $model->orderBy('id','desc');
+
+        //导出文件
+        if ($request->input('is_export') == 1) {
+            $this->exportCanceledFile($model->get());
+            return response()->redirectTo('repair/finished');
+        }
+
+        $items = $model->paginate(config('cbs.pageNumber'));
         return view('repair.canceled', compact('items'));
     }
 
@@ -365,6 +403,64 @@ class RepairController extends Controller
                 $item->finished_at,
                 $item->finish_remark,
                 $item->comment,
+            ];
+            $data[] = $tmp;
+        }
+        ExcelController::exportFile($filename, $data);
+    }
+
+    private function exportCanceledFile($items)
+    {
+        $filename = '维修已取消明细-'.date('Ymd');
+        //标题行
+        $titleRow = ['维修已取消明细-'.date('Ymd')];
+        //菜单第一行
+        $menuRow = ['序号','位置/房间号','报修内容','报修人','报修时间','审核人','审核时间','审核说明'];
+        $data = [
+            $titleRow,
+            $menuRow,
+        ];
+        // 序号
+        $serialNumber = 1;
+        foreach ($items as $item) {
+            $tmp = [
+                $serialNumber++,
+                $item->location,
+                $item->content,
+                $item->name,
+                $item->report_at,
+                $item->reviewer,
+                $item->reviewed_at,
+                $item->review_remark,
+            ];
+            $data[] = $tmp;
+        }
+        ExcelController::exportFile($filename, $data);
+    }
+
+    private function exportUnpassedFile($items)
+    {
+        $filename = '维修未通过审核明细-'.date('Ymd');
+        //标题行
+        $titleRow = ['维修未通过审核明细-'.date('Ymd')];
+        //菜单第一行
+        $menuRow = ['序号','位置/房间号','报修内容','报修人','报修时间','审核人','未通过时间','未通过说明'];
+        $data = [
+            $titleRow,
+            $menuRow,
+        ];
+        // 序号
+        $serialNumber = 1;
+        foreach ($items as $item) {
+            $tmp = [
+                $serialNumber++,
+                $item->location,
+                $item->content,
+                $item->name,
+                $item->report_at,
+                $item->reviewer,
+                $item->reviewed_at,
+                $item->review_remark,
             ];
             $data[] = $tmp;
         }

@@ -60,7 +60,7 @@
 
 @endsection
 @section('bottom')
-
+    <p>共有 {{count($underReviews)}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

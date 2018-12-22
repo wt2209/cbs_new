@@ -17,7 +17,10 @@
             <div class="navbar-header">
                 <form class="navbar-form navbar-left" role="search" method="get" action="{{ url('repair/finished') }}">
                     <div class="form-group">
-                        <input type="text" class="form-control" value="{{ $year.'-'.$month }}" name="year_month" placeholder="月份，格式为：2016-3">&nbsp;&nbsp;&nbsp;
+                        <input type="text" class="form-control" value="{{isset($_GET['location']) ? $_GET['location'] : ''}}" name="location" placeholder="位置/房间号">&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" value="{{isset($_GET['year_month']) ? $_GET['year_month'] : ''}}" name="year_month" placeholder="月份，格式为：2016-3">&nbsp;&nbsp;&nbsp;
                     </div>
                     <button type="submit" class="btn btn-primary">搜索</button>&nbsp;&nbsp;或&nbsp;
                     <button class="btn btn-info btn-sm export">导出到文件</button>
@@ -73,13 +76,17 @@
                 </tr>
             @endforeach
         </table>
+        {!! $items->appends([
+               'year_month'=>isset($_GET['year_month']) ? $_GET['year_month'] : '',
+               'location'=>isset($_GET['location']) ? $_GET['location'] : '',
+           ])->render() !!}
     </div>
 @endsection
 @section('modal')
 
 @endsection
 @section('bottom')
-
+    <p>共有 {{$items->total()}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>

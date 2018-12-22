@@ -1,7 +1,7 @@
 @extends('header')
 @section('title', '房间使用记录')
 @section('css')
-    <link rel="stylesheet" href="{{ asset('/css/utility/base.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('/css/common.css') }}"/>
 @endsection
 @section('header')
     <ul class="nav nav-pills nav-small">
@@ -28,6 +28,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        <input type="text" class="form-control" name="room" placeholder="房间号" value="{{isset($_GET['room'])?$_GET['room']:''}}">
                         <select name="in_use" class="form-control">
                             <option value="2" @if(isset($_GET['in_use'])&&$_GET['in_use'] == 2) selected=""@endif>全部</option>
                             <option value="1" @if(isset($_GET['in_use'])&&$_GET['in_use'] == 1) selected=""@endif>正在使用</option>
@@ -93,40 +94,14 @@
         {!! $records->appends([
                 'company_id'=>isset($_GET['company_id']) ? $_GET['company_id'] : 0,
                 'in_use'=>isset($_GET['in_use']) ? $_GET['in_use'] : 2,
+                'room'=>isset($_GET['room']) ? $_GET['room'] : '',
             ])->render() !!}
     </div>
 @endsection
-@section('modal')
-    <!-- delete modal -->
-    <div id="delete-modal" class="modal bs-example-modal-sm fade">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="gridSystemModalLabel">删除确认</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        确认要删除吗？
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
 @section('bottom')
-    <p>共有 {{$count}} 条记录</p>
+    <p>共有 {{$records->total()}} 条记录</p>
 @endsection
 @section('js')
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
-    <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
-    <script>
-        //模态框删除
-        ajaxDelete('{{ url('utility/base-delete/') }}');
-    </script>
 @endsection
