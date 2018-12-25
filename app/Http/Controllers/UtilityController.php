@@ -186,7 +186,7 @@ class UtilityController extends Controller{
         $roomName = trim(strip_tags(htmlspecialchars($request->room_name)));
         $yearMonth = trim(strip_tags(htmlspecialchars($request->year_month)));
 
-        $model = UtilityBase::where('u_base_id', '>', 0);
+        $model = UtilityBase::with('room');
 
         if (!empty($roomName)) { //房间号不空，不用处理公司名
             $roomId = Room::where('room_name', $roomName)->value('room_id');
@@ -663,7 +663,7 @@ class UtilityController extends Controller{
         foreach ($utilityBases as $utilityBase) {
             $tmp = [
                 $serialNumber++,
-                $utilityBase->room_name,
+                $utilityBase->room->room_name,
                 $utilityBase->year . '-' . $utilityBase->month,
                 $utilityBase->electric_base,
                 $utilityBase->water_base,
