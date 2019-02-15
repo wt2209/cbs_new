@@ -71,7 +71,7 @@
                     <td>{{ $item->comment }}</td>
                     <td>
                         <a href="{{ url('repair/comment/'.$item->id) }}" class="btn btn-success btn-xs">评价</a>
-                        {{--<a href="javascript:;" delete_id="{{ $room->room_id }}" class="btn btn-danger btn-xs delete-button">删除</a>--}}
+                        <button delete_id="{{ $item->id }}"  class="btn btn-danger btn-xs delete-button">删除</button>
                     </td>
                 </tr>
             @endforeach
@@ -83,7 +83,26 @@
     </div>
 @endsection
 @section('modal')
-
+    <!-- delete modal -->
+    <div id="delete-modal" class="modal bs-example-modal-sm fade">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="gridSystemModalLabel">删除确认</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        确认要删除吗？
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="delete-confirm" type="button" class="btn btn-primary">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('bottom')
     <p>共有 {{$items->total()}} 条记录</p>
@@ -92,7 +111,8 @@
     <script src="{{ asset('/bootstrap-3.3.5/js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/functions.js') }}"></script>
     <script>
-
+        //模态框删除
+        ajaxDelete('{{ url('repair/delete') }}');
 
     </script>
 @endsection

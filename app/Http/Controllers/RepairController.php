@@ -373,6 +373,18 @@ class RepairController extends Controller
         return response()->json(['message'=>'错误：保存失败...', 'status'=>0]);
     }
 
+    public function getDelete(Request $request)
+    {
+        $id = intval($request->delete_id);
+        if (!$id) {
+            return response()->json(['message'=>"错误：请正确操作！", 'status'=>0]);
+        }
+        if (Repair::destroy($id)) {
+            return response()->json(['message'=>"操作成功！", 'status'=>1]);
+        }
+        return response()->json(['message'=>"错误：请重试！", 'status'=>0]);
+    }
+
     /**
      * 导出文件
      * @param $items
