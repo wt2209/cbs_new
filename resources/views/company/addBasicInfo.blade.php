@@ -36,6 +36,7 @@
                         <select name="belongs_to" class="form-control">
                             <option value="造船" >造船</option>
                             <option value="修船" >修船</option>
+                            <option value="配餐" >配餐</option>
                         </select>
                     </td>
                     <td width="10%"></td>

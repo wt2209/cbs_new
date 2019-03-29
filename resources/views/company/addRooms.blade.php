@@ -52,6 +52,7 @@
                                     <select name="belongs_to" class="form-control belongs-to">
                                         <option value="造船" @if($company->belongs_to == '造船') selected @endif>造船</option>
                                         <option value="修船" @if($company->belongs_to == '修船') selected @endif>修船</option>
+                                        <option value="配餐" @if($company->belongs_to == '配餐') selected @endif>配餐</option>
                                     </select>&nbsp;&nbsp;&nbsp;
                                 </div>
                                 <div class="form-group electric-base">
