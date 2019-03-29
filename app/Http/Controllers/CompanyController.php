@@ -193,6 +193,7 @@ class CompanyController extends Controller
             'company_id'=>'integer|min:1',
             'company_name' => 'required|between:1,255',
             'company_description'=>'between:1,255',
+            'belongs_to' => 'in:修船,造船,配餐',
             'linkman'=>'required|between:1,5',
             'linkman_tel'=>'numeric',
             'manager'=>'between:1,5',
@@ -213,7 +214,7 @@ class CompanyController extends Controller
         $company->manager_tel = $request->manager_tel;
         $company->company_remark = $request->company_remark;
         //懒得查文档在$validate中验证了。。。。
-        $company->belongs_to = $request->belongs_to == '修船' ? '修船' : '造船';
+        $company->belongs_to = $request->belongs_to;
 
         //开启事务
         DB::beginTransaction();
@@ -236,6 +237,7 @@ class CompanyController extends Controller
             'company_id'=>'required|integer|min:1',
             'company_name' => 'required|between:1,255',
             'company_description'=>'between:1,255',
+            'belongs_to' => 'in:修船,造船,配餐',
             'linkman'=>'required|between:1,5',
             'linkman_tel'=>'numeric',
             'manager'=>'between:1,5',
@@ -259,7 +261,7 @@ class CompanyController extends Controller
             $company->company_remark = $request->company_remark;
             $company->created_at = $request->created_at;
             //懒得查文档在$validate中验证了。。。。
-            $company->belongs_to = $request->belongs_to == '修船' ? '修船' : '造船';
+            $company->belongs_to = $request->belongs_to;
             //开启事务
             DB::beginTransaction();
             if ($company->save()) {
